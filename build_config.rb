@@ -14,7 +14,11 @@ MRuby::Build.new do |conf|
   # include the default GEMs
   # conf.gembox 'default'
   
-  conf.gem :core => "mruby-print"
+  conf.gem core: "mruby-print"
+  
+  conf.gem github: 'matsumoto-r/mruby-sleep'
+  conf.gem github: 'iij/mruby-io'
+  conf.gem github: 'iij/mruby-socket'
   
   conf.gem 'main'
   

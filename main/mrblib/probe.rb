@@ -5,18 +5,19 @@ end
 
 
 class D3Probe
-  @@plugins = {}
+  @@plugin = nil
   
   def self.register_plugin(name, klass, *args)
-    @@plugins[name] = klass.new(*args)
+    @@plugin = klass.new(*args)
   end
   
-  def self.call_plugins
-    @@plugins.each do |name, p|
-      p.action
-    end
+  def self.start_cycle
+    @@plugin.cycle()
   end
   
+  def self.pipe
+    @pipe
+  end
   
 end
 

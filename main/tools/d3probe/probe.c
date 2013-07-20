@@ -9,17 +9,23 @@ static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
 }
 
 
-static mrb_value plugin_usleep(mrb_state *mrb, mrb_value self)
+static mrb_value plugin_sleep(mrb_state *mrb, mrb_value self)
 {
-  mrb_int delay;
+  mrb_float delay;
   
-  mrb_get_args(mrb, "i", &delay);
+  mrb_get_args(mrb, "f", &delay);
   
-  usleep(delay * 1000);
+  usleep((int)(delay * 1000000));
   
   return mrb_nil_value();
 }
 
+
+// static mrb_value register_plugin(mrb_state *mrb, mrb_value self)
+// {
+//   mrb_value m_name, m_obj;
+  
+// }
 
 
 // static mrb_value plugin_pipe(mrb_state *mrb, mrb_value self)
@@ -39,11 +45,13 @@ void setup_api(mrb_state *mrb)
   int ai = mrb_gc_arena_save(mrb);
   
   // Kernel
-  mrb_define_method(mrb, kernel, "msleep", plugin_usleep, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
   
   // D3Probe
   mrb_define_singleton_method(mrb, class, "report", plugin_report, ARGS_REQ(1));
-  // mrb_define_singleton_method(mrb, class, "pipe", plugin_pipe, ARGS_REQ(0));
+  // mrb_define_singleton_method(mrb, class, "register_plugin", register_plugin, ARGS_REQ(2));
+  
+  setup_plugin_api(mrb);
   
   mrb_gc_arena_restore(mrb, ai);
 }

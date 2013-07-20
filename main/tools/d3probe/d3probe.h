@@ -2,7 +2,9 @@
 #include "mruby.h"
 #include "mruby/proc.h"
 #include "mruby/class.h"
-// #include "mruby/array.h"
+#include "mruby/array.h"
+#include "mruby/hash.h"
+#include "mruby/data.h"
 #include "mruby/string.h"
 #include "mruby/compile.h"
 #include "mruby/dump.h"
@@ -21,6 +23,8 @@
 #define RUBY_ERR(MSG) { mrb_raise(mrb, E_RUNTIME_ERROR, MSG); return self; }
 #define RIBY_ERRF(MSG, FORMAT, ARGS...) { mrb_raisef(mrb, E_RUNTIME_ERROR, FORMAT, ## ARGS); return self; }
 
+// debug
+void pp(mrb_state *mrb, mrb_value obj, int prompt);
 
 
 // run aruby code (exec.c)
@@ -31,6 +35,7 @@ int execute_string(mrb_state *mrb, const char *code);
 
 // api setup
 void setup_api(mrb_state *mrb);
+void setup_plugin_api(mrb_state *mrb);
 
 
 
@@ -38,8 +43,8 @@ typedef struct {
   mrb_value p;
   mrb_state *mrb;
   mrb_value plugin_pipe;
-  int       host_pipe;
-  // int       pipe[2];  // 0 = main
-                      // 1 = thread
+  mrb_value plugin_obj;
   pthread_t thread;
+  int       host_pipe;
+  
 } Plugin;

@@ -38,6 +38,10 @@ int execute_file(mrb_state *mrb, const char *path)
   FILE *script;
   
   script = fopen(path, "r");
+  if( !script ){
+    fprintf(stderr, "File Not found: %s\n", path);
+    return -1;
+  }
   
   c = mrbc_context_new(mrb);
   v = mrb_load_file_cxt(mrb, script, c);

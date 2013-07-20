@@ -1,20 +1,9 @@
 
 #include "d3probe.h"
 
-static void pp(mrb_state *mrb, mrb_value obj, int prompt)
-{
-  obj = mrb_funcall(mrb, obj, "inspect", 0);
-  if (prompt) {
-    if (!mrb->exc) {
-      fputs(" => ", stdout);
-    }
-    else {
-      obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
-    }
-  }
-  fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);
-  putc('\n', stdout);
-}
+
+
+
 
 
 mrb_value wrap_io(mrb_state *mrb, int fd)
@@ -25,16 +14,10 @@ mrb_value wrap_io(mrb_state *mrb, int fd)
 
 void *plugin_thread(void *arg)
 {
+  mrb_value ret;
   Plugin *plugin = (Plugin *)arg;
   
-  struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
-  mrb_value probe_klass = mrb_obj_value(rprobe);
-  mrb_sym pipe_iv_sym = mrb_intern2(plugin->mrb, "@pipe", 5);
-  
-  
-  mrb_iv_set(plugin->mrb, probe_klass, pipe_iv_sym, plugin->plugin_pipe);
-  mrb_value ret = mrb_funcall(plugin->mrb, probe_klass, "start_cycle", 0);
-  
+  ret = mrb_funcall(plugin->mrb, plugin->plugin_obj, "cycle", 0);
   if (plugin->mrb->exc) {
     if (!mrb_undef_p(ret)) {
       mrb_print_error(plugin->mrb);
@@ -62,6 +45,17 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   plugin->host_pipe = fds[0];
   plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1]);
   
+  
+  // set ivs
+  struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
+  mrb_value probe_klass = mrb_obj_value(rprobe);
+  mrb_sym plugin_cv_sym = mrb_intern2(plugin->mrb, "@@plugin", 8);
+  
+  plugin->plugin_obj = mrb_cv_get(plugin->mrb, probe_klass, plugin_cv_sym);
+  
+  // associates the c structure with the ruby objetc
+  DATA_PTR(plugin->plugin_obj)  = (void*)plugin;
+  
   return 0;
 }
 
@@ -85,12 +79,14 @@ int main(int argc, char const *argv[])
   char buffer[BUFFER_SIZE];
   int i, n;
   Plugin plugins[MAX_PLUGINS];
-  int plugins_count = 2;
+  int plugins_count = 0;
   // mrb_state *mrb = mrb_open();
   
-  init_plugin_from_file(&plugins[0], "test.rb");
-  init_plugin_from_file(&plugins[1], "test2.rb");
+  printf("Loading plugins...\n");
+  init_plugin_from_file(&plugins[0], "plugins/test.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
   
+  printf("Loaded.\n");
   
   // puts("setup");
   // setup_api(mrb);

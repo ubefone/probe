@@ -16,9 +16,9 @@ MRuby::Build.new do |conf|
   
   conf.gem core: "mruby-print"
   
-  # conf.gem github: 'matsumoto-r/mruby-sleep'
   conf.gem github: 'iij/mruby-io'
   conf.gem github: 'iij/mruby-socket'
+  conf.gem github: 'mattn/mruby-json'
   
   conf.gem 'main'
   

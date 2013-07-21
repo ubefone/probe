@@ -1,5 +1,11 @@
 
 class Plugin
+  def send_metrics(h)
+    pipe.write( JSON::stringify(h) )
+  end
+end
+
+class CPUStruct < Struct.new(:user, :sys, :nice, :idle, :wait, :irq, :soft_irq, :stolen, :combined)
   
 end
 
@@ -17,3 +23,8 @@ class D3Probe
     
 end
 
+
+
+def register_plugin(name, obj)
+  D3Probe.register_plugin(name, obj)
+end

@@ -3,5 +3,5 @@ MRuby::Gem::Specification.new('d3-probe') do |spec|
   spec.authors = 'Julien Ammous'
   
   spec.bins = %w(d3probe)
-  spec.linker.libraries << %w(pthread)
+  spec.linker.libraries << %w(pthread sigar)
 end

@@ -17,11 +17,12 @@
 #include <pthread.h>
 #include <sys/socket.h>
 
+#define SCHECK(what) if(what == -1){ fprintf(stderr, "error in " #what "\n"); }
 #define C_CHECK(MSG, what) if(what == -1){ perror(MSG);  return -1; }
 
 
 #define RUBY_ERR(MSG) { mrb_raise(mrb, E_RUNTIME_ERROR, MSG); return self; }
-#define RIBY_ERRF(MSG, FORMAT, ARGS...) { mrb_raisef(mrb, E_RUNTIME_ERROR, FORMAT, ## ARGS); return self; }
+#define RUBY_ERRF(MSG, FORMAT, ARGS...) { mrb_raisef(mrb, E_RUNTIME_ERROR, FORMAT, ## ARGS); return self; }
 
 // debug
 void pp(mrb_state *mrb, mrb_value obj, int prompt);
@@ -31,10 +32,12 @@ void pp(mrb_state *mrb, mrb_value obj, int prompt);
 int execute_compiled_file(mrb_state *mrb, const char *path);
 int execute_file(mrb_state *mrb, const char *path);
 int execute_string(mrb_state *mrb, const char *code);
+int check_exception(mrb_state *mrb);
 
 
 // api setup
 void setup_api(mrb_state *mrb);
+void setup_sigar_api(mrb_state *mrb);
 void setup_plugin_api(mrb_state *mrb);
 
 

@@ -73,6 +73,8 @@ static void fill_timeout(struct timeval *tv, uint64_t duration)
 #define BUFFER_SIZE 500
 #define MAX_PLUGINS 10
 
+#define NOPLUGIN_VALUE 0
+
 int main(int argc, char const *argv[])
 {
   fd_set rfds;
@@ -80,13 +82,22 @@ int main(int argc, char const *argv[])
   int i, n;
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
-  // mrb_state *mrb = mrb_open();
+  mrb_state *mrb = mrb_open();
+  mrb_value r_output;
+  struct RClass *output_class;
+  mrb_sym output_gv_sym = mrb_intern2(mrb, "output", 6);
+  
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[0], "plugins/test.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
+  // init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
   
-  printf("Loaded.\n");
+  
+  printf("Instanciating output class...\n");
+  output_class = mrb_class_get(mrb, "Output");
+  r_output = mrb_funcall(mrb, mrb_obj_value(output_class), "new", 0);
+  // protect from GC
+  mrb_gv_set(mrb, output_gv_sym, r_output);
   
   // puts("setup");
   // setup_api(mrb);
@@ -111,6 +122,9 @@ int main(int argc, char const *argv[])
     int fds[MAX_PLUGINS];
     int maxfd = 0;
     struct timeval tv;
+    mrb_value r_buffer;
+    // int left;
+    
     sleep(2);
     
     bzero(fds, sizeof(int) * MAX_PLUGINS);
@@ -126,27 +140,41 @@ int main(int argc, char const *argv[])
     printf("waiting answers...\n");
     // and now wait for each answer
     while(1){
+      int left = 0;
+      
       FD_ZERO(&rfds);
       
       for(i = 0; i< MAX_PLUGINS; i++){
-        if( fds[i] != 0 ){
+        if( fds[i] != NOPLUGIN_VALUE ){
           FD_SET(fds[i], &rfds);
+          left++;
           if( fds[i] > maxfd )
             maxfd = fds[i];
         }
       }
       
-      fill_timeout(&tv, 5000);
+      // printf("left: %d %d\n", left, left <= 0);
+      
+      if( 0 == left )
+        break;
+      
+      fill_timeout(&tv, 500000);
       // printf("before select\n");
       n = select(maxfd + 1, &rfds, NULL, NULL, &tv);
-      // printf("after select: %d\n", n);
+      printf("after select: %d\n", n);
       if( n > 0 ){
         // find out which pipes have data
         for(i = 0; i< MAX_PLUGINS; i++){
           if( (fds[i] != 0) && FD_ISSET(fds[i], &rfds) ){
             n = read(fds[i], buffer, sizeof(buffer));
             buffer[n] = 0x00;
+            r_buffer = mrb_str_buf_new(mrb, n);
+            mrb_str_buf_cat(mrb, r_buffer, buffer, n);
+            
+            mrb_funcall(mrb, r_output, "add", 1, r_buffer);
+            check_exception(mrb);
             printf("data from plugin: %s\n", buffer);
+            fds[i] = 0;
           }
         }
       }
@@ -156,8 +184,10 @@ int main(int argc, char const *argv[])
       else {
         perror("select");
       }
-
+      
     }
+    
+    mrb_funcall(mrb, r_output, "flush", 0);
   }
   
   for(i= 0; i< plugins_count; i++){

@@ -52,6 +52,7 @@ void setup_api(mrb_state *mrb)
   // mrb_define_singleton_method(mrb, class, "register_plugin", register_plugin, ARGS_REQ(2));
   
   setup_plugin_api(mrb);
+  setup_sigar_api(mrb);
   
   mrb_gc_arena_restore(mrb, ai);
 }

@@ -80,3 +80,15 @@ int execute_string(mrb_state *mrb, const char *code)
   
   return 0;
 }
+
+int check_exception(mrb_state *mrb)
+{
+  if (mrb->exc) {
+    mrb_print_error(mrb);
+    return -1;
+  }
+  
+  return 0;
+}
+
+

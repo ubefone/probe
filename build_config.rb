@@ -15,12 +15,21 @@ MRuby::Build.new do |conf|
   # conf.gembox 'default'
   
   conf.gem core: "mruby-print"
+  conf.gem core: "mruby-struct"
+  # conf.gem core: "mruby-enum-ext"
+  # conf.gem core: "mruby-string-ext"
   
   conf.gem github: 'iij/mruby-io'
   conf.gem github: 'iij/mruby-socket'
   conf.gem github: 'mattn/mruby-json'
   
   conf.gem 'main'
+  
+  conf.cc do |cc|
+     # cc.defines = %w(MRB_INT64)
+     cc.defines = %w(MRB_GC_STRESS)
+     cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
+   end
   
   # C compiler settings
   # conf.cc do |cc|

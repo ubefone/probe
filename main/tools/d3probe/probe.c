@@ -1,12 +1,12 @@
 
 #include "d3probe.h"
 
-static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
-{
-  printf("got a report\n");
+// static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
+// {
+//   printf("got a report\n");
   
-  return mrb_nil_value();
-}
+//   return mrb_nil_value();
+// }
 
 
 static mrb_value plugin_sleep(mrb_state *mrb, mrb_value self)
@@ -37,7 +37,7 @@ static mrb_value plugin_sleep(mrb_state *mrb, mrb_value self)
 void setup_api(mrb_state *mrb)
 {
   // class = mrb_define_class(mrb, "D3Probe", NULL);
-  struct RClass *class = mrb_class_get(mrb, "D3Probe");
+  // struct RClass *class = mrb_class_get(mrb, "D3Probe");
   struct RClass *kernel = mrb->kernel_module;
   
   
@@ -48,7 +48,7 @@ void setup_api(mrb_state *mrb)
   mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
   
   // D3Probe
-  mrb_define_singleton_method(mrb, class, "report", plugin_report, ARGS_REQ(1));
+  // mrb_define_singleton_method(mrb, class, "report", plugin_report, ARGS_REQ(1));
   // mrb_define_singleton_method(mrb, class, "register_plugin", register_plugin, ARGS_REQ(2));
   
   setup_plugin_api(mrb);

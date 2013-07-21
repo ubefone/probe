@@ -47,11 +47,12 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   
   
   // set ivs
-  struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
-  mrb_value probe_klass = mrb_obj_value(rprobe);
-  mrb_sym plugin_cv_sym = mrb_intern2(plugin->mrb, "@@plugin", 8);
+  // struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
+  // mrb_value probe_klass = mrb_obj_value(rprobe);
+  mrb_sym plugin_iv_sym = mrb_intern2(plugin->mrb, "@plugin", 7);
   
-  plugin->plugin_obj = mrb_cv_get(plugin->mrb, probe_klass, plugin_cv_sym);
+  plugin->plugin_obj = mrb_iv_get(plugin->mrb, mrb_obj_value(plugin->mrb->top_self), plugin_iv_sym);
+  pp(plugin->mrb, plugin->plugin_obj, 0);
   
   // associates the c structure with the ruby objetc
   DATA_PTR(plugin->plugin_obj)  = (void*)plugin;
@@ -85,8 +86,10 @@ int main(int argc, char const *argv[])
   mrb_state *mrb = mrb_open();
   mrb_value r_output;
   struct RClass *output_class;
-  mrb_sym output_gv_sym = mrb_intern2(mrb, "output", 6);
+  mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   
+  printf("Initializing core...\n");
+  execute_file(mrb, "plugins/main.rb");
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[0], "plugins/test.rb"); plugins_count++;
@@ -94,20 +97,12 @@ int main(int argc, char const *argv[])
   
   
   printf("Instanciating output class...\n");
-  output_class = mrb_class_get(mrb, "Output");
-  r_output = mrb_funcall(mrb, mrb_obj_value(output_class), "new", 0);
+  // output_class = mrb_class_get(mrb, "Output");
+  // r_output = mrb_iv_get(mrb, mrb_obj_value(mrb->top_self), output_iv_sym);
+  // r_output = mrb_funcall(mrb, mrb_obj_value(output_class), "new", 0);
   // protect from GC
-  mrb_gv_set(mrb, output_gv_sym, r_output);
-  
-  // puts("setup");
-  // setup_api(mrb);
-  // puts("load");
-  // execute_file(mrb, "test.rb");
-  // // execute_compiled_file(mrb, "test.mrb");
-  // // execute_string(mrb, "fuck(1)");
-  
-  // puts("after load");
-  // mrb_value p;
+  // mrb_iv_set(mrb, mrb_obj_value(mrb->top_self), output_iv_sym, r_output);
+  r_output = mrb_gv_get(mrb, output_gv_sym);
   
   // start all the threads
   for(i= 0; i< plugins_count; i++){
@@ -120,12 +115,11 @@ int main(int argc, char const *argv[])
   
   while(1){
     int fds[MAX_PLUGINS];
-    int maxfd = 0;
+    int maxfd = 0, ai;
     struct timeval tv;
     mrb_value r_buffer;
-    // int left;
     
-    sleep(2);
+    sleep(1);
     
     bzero(fds, sizeof(int) * MAX_PLUGINS);
     
@@ -168,13 +162,20 @@ int main(int argc, char const *argv[])
           if( (fds[i] != 0) && FD_ISSET(fds[i], &rfds) ){
             n = read(fds[i], buffer, sizeof(buffer));
             buffer[n] = 0x00;
+            
+            ai = mrb_gc_arena_save(mrb);
             r_buffer = mrb_str_buf_new(mrb, n);
             mrb_str_buf_cat(mrb, r_buffer, buffer, n);
             
+            // mrb_funcall(mrb, r_output, "tick", 0);
             mrb_funcall(mrb, r_output, "add", 1, r_buffer);
             check_exception(mrb);
-            printf("data from plugin: %s\n", buffer);
+            // printf("data from plugin: %s\n", buffer);
+            
+            // pp(mrb, r_output, 0);
             fds[i] = 0;
+            
+            mrb_gc_arena_restore(mrb, ai);
           }
         }
       }

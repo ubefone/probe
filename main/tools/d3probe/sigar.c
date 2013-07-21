@@ -42,7 +42,6 @@ static mrb_value _sigar_cpu_get(mrb_state *mrb, mrb_value self)
 {
   int ret;
   sigar_state_t *state = DATA_PTR(self);
-  mrb_int cpu_index;
   sigar_cpu_t new;
   sigar_cpu_perc_t cpu_perc;
   
@@ -66,6 +65,29 @@ static mrb_value _sigar_cpu_get(mrb_state *mrb, mrb_value self)
     );
 }
 
+#define CONVERT_KB(FIELD) mrb_fixnum_value(FIELD / 1024)
+static mrb_value _sigar_mem_get(mrb_state *mrb, mrb_value self)
+{
+  int ret;
+  sigar_state_t *state = DATA_PTR(self);
+  sigar_mem_t mem;
+  
+  struct RClass *c = mrb_class_get(mrb, "MemStruct");
+  
+  ret = sigar_mem_get(state->sigar, &mem);
+  // printf("TOTO: %d\n", CONVERT_KB(mem.ram));
+  return mrb_funcall(mrb, mrb_obj_value(c), "new", 8,
+      mrb_fixnum_value(mem.ram),
+      CONVERT_KB(mem.total),
+      CONVERT_KB(mem.used),
+      CONVERT_KB(mem.free),
+      CONVERT_KB(mem.actual_used),
+      CONVERT_KB(mem.actual_free),
+      mrb_float_value(mrb, mem.used_percent),
+      mrb_float_value(mrb, mem.free_percent)
+    );
+}
+
 
 
 void setup_sigar_api(mrb_state *mrb)
@@ -74,5 +96,6 @@ void setup_sigar_api(mrb_state *mrb)
   
   mrb_define_method(mrb, c, "initialize", _sigar_init,  ARGS_REQ(0));
   mrb_define_method(mrb, c, "cpu_get", _sigar_cpu_get,  ARGS_REQ(0));
+  mrb_define_method(mrb, c, "mem_get", _sigar_mem_get,  ARGS_REQ(0));
   // mrb_define_singleton_method(mrb, c, "inherited", plugin_inherited, ARGS_REQ(1));
 }

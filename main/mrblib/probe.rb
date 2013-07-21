@@ -5,26 +5,37 @@ class Plugin
   end
 end
 
-class CPUStruct < Struct.new(:user, :sys, :nice, :idle, :wait, :irq, :soft_irq, :stolen, :combined)
-  
-end
+
+# unit: percents
+CPUStruct = Struct.new(
+    :user,
+    :sys,
+    :nice,
+    :idle,
+    :wait,
+    :irq,
+    :soft_irq,
+    :stolen,
+    :combined
+  )
+
+# unit: KB
+MemStruct = Struct.new(
+    :ram,             # Mb
+    :total,           # Kb
+    :used,
+    :free,
+    :actual_used,
+    :actual_free,
+    :used_percent,
+    :free_percent
+  )
 
 
-class D3Probe
-  @@plugin = nil
-  
-  def self.register_plugin(name, obj)
-    @@plugin = obj
-  end
-  
-  def self.start_cycle
-    @@plugin.cycle()
-  end
-    
-end
 
-
+@plugin = nil
 
 def register_plugin(name, obj)
-  D3Probe.register_plugin(name, obj)
+  @plugin = obj
 end
+

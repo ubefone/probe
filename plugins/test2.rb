@@ -6,7 +6,7 @@ class SnmpPlugin < Plugin
     # @snmp.version = '1'
     # @snmp.connect()
   end
-  
+    
   def cycle
     loop do
       p [:LOOP]
@@ -14,11 +14,20 @@ class SnmpPlugin < Plugin
       # sleep(3)
       pipe.recv(200)
       
-      @snmp1.get(['SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0']) do |ret|
-        
-      end
+      pp = ->(ret){
+        p [:PP, ret]
+      }
+
       
-      @snmp2.get(['SNMPv2-MIB::sysServices.0'])
+      @snmp1.get(['SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0'], &pp)
+      # @snmp1.get(['SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0']) do |ret|
+      #   p [:CB, ret]
+      # end
+      
+      @snmp2.get(['SNMPv2-MIB::sysServices.0'], &pp)
+      # @snmp2.get(['SNMPv2-MIB::sysServices.0']) do |ret|
+      #   p [:CB2, ret]
+      # end
       
       SNMP.select([@snmp1, @snmp2])
       

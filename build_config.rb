@@ -16,6 +16,7 @@ MRuby::Build.new do |conf|
   
   conf.gem core: "mruby-print"
   conf.gem core: "mruby-struct"
+  conf.gem core: "mruby-numeric-ext"
   # conf.gem core: "mruby-enum-ext"
   # conf.gem core: "mruby-string-ext"
   

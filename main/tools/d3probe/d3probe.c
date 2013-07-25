@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[0], "plugins/test.rb"); plugins_count++;
-  // init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
   
   
   printf("Instanciating output class...\n");
@@ -155,7 +155,7 @@ int main(int argc, char const *argv[])
       fill_timeout(&tv, 500000);
       // printf("before select\n");
       n = select(maxfd + 1, &rfds, NULL, NULL, &tv);
-      printf("after select: %d\n", n);
+      // printf("after select: %d\n", n);
       if( n > 0 ){
         // find out which pipes have data
         for(i = 0; i< MAX_PLUGINS; i++){

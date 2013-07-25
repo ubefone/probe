@@ -94,7 +94,7 @@ class TestPlugin < Plugin
       sleep(0.1)
       
       @cpu.read()
-      p @mem.read()
+      @mem.read()
       
       begin
         data = pipe.recv(20)

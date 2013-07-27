@@ -1,7 +1,7 @@
 class SnmpPlugin < Plugin
   def initialize
-    @snmp1 = SNMP.new()
-    @snmp2 = SNMP.new()
+    @snmp1 = SNMP.new('127.0.0.1')
+    @snmp2 = SNMP.new('127.0.0.1')
     # @snmp.community = 'public'
     # @snmp.version = '1'
     # @snmp.connect()
@@ -14,22 +14,15 @@ class SnmpPlugin < Plugin
       # sleep(3)
       pipe.recv(200)
       
-      pp = ->(ret){
-        p [:PP, ret]
-      }
-
+      @snmp1.get('SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0') do |ret|
+        p [:CB, ret]
+      end
       
-      @snmp1.get(['SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0'], &pp)
-      # @snmp1.get(['SNMPv2-MIB::sysName.0', 'SNMPv2-MIB::sysServices.0']) do |ret|
-      #   p [:CB, ret]
-      # end
+      @snmp2.get('SNMPv2-MIB::sysServices.0') do |ret|
+        p [:CB2, ret]
+      end
       
-      @snmp2.get(['SNMPv2-MIB::sysServices.0'], &pp)
-      # @snmp2.get(['SNMPv2-MIB::sysServices.0']) do |ret|
-      #   p [:CB2, ret]
-      # end
-      
-      SNMP.select([@snmp1, @snmp2])
+      SNMP.select()
       
       # D3Probe.report(:user => 7, :sstem => 4)
       send_metrics(

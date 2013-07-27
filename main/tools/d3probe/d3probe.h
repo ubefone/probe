@@ -43,6 +43,10 @@ void setup_plugin_api(mrb_state *mrb);
 void setup_snmp_api(mrb_state *mrb);
 
 
+// gc
+void protect_register(mrb_state *mrb, mrb_value v);
+void protect_unregister(mrb_state *mrb, mrb_value v);
+
 
 
 typedef struct {

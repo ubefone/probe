@@ -27,8 +27,8 @@ MRuby::Build.new do |conf|
   conf.gem 'main'
   
   conf.cc do |cc|
-     # cc.defines = %w(MRB_INT64)
-     cc.defines = %w(MRB_GC_STRESS)
+     cc.defines = %w(MRB_INT64)
+     # cc.defines = %w(MRB_GC_STRESS)
      cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
    end
   

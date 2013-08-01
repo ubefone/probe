@@ -1,7 +1,8 @@
 
 #include "d3probe.h"
 
-
+#include <fcntl.h>
+#include <errno.h>
 
 
 
@@ -34,13 +35,21 @@ void *plugin_thread(void *arg)
 
 int init_plugin_from_file(Plugin *plugin, const char *path)
 {
-  int fds[2];
+  int fds[2], flags;
   
   plugin->mrb = mrb_open();
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
   
   C_CHECK("socketpair", socketpair(PF_UNIX, SOCK_DGRAM, 0, fds));
+  
+  flags = fcntl(fds[0], F_GETFL);
+  flags |= O_NONBLOCK;
+  if( fcntl(fds[0], F_SETFL, flags) == -1 ){
+    perror("fcntl");
+    return -1;
+  }
+  
   
   plugin->host_pipe = fds[0];
   plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1]);
@@ -76,6 +85,7 @@ static void fill_timeout(struct timeval *tv, uint64_t duration)
 
 #define NOPLUGIN_VALUE 0
 
+
 int main(int argc, char const *argv[])
 {
   fd_set rfds;
@@ -89,11 +99,12 @@ int main(int argc, char const *argv[])
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   
   printf("Initializing core...\n");
+  setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[0], "plugins/test.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
+  // init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
   
   
   printf("Instanciating output class...\n");
@@ -103,6 +114,10 @@ int main(int argc, char const *argv[])
   // protect from GC
   // mrb_iv_set(mrb, mrb_obj_value(mrb->top_self), output_iv_sym, r_output);
   r_output = mrb_gv_get(mrb, output_gv_sym);
+  
+  printf("Sending initial report...\n");
+  mrb_funcall(mrb, r_output, "send_report", 0);
+
   
   // start all the threads
   for(i= 0; i< plugins_count; i++){
@@ -128,10 +143,10 @@ int main(int argc, char const *argv[])
       strcpy(buffer, "request");
       C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
       fds[i] = plugins[i].host_pipe;
-      printf("sent request to %d\n", i);
+      // printf("sent request to %d\n", i);
     }
     
-    printf("waiting answers...\n");
+    // printf("waiting answers...\n");
     // and now wait for each answer
     while(1){
       int left = 0;
@@ -159,23 +174,33 @@ int main(int argc, char const *argv[])
       if( n > 0 ){
         // find out which pipes have data
         for(i = 0; i< MAX_PLUGINS; i++){
-          if( (fds[i] != 0) && FD_ISSET(fds[i], &rfds) ){
-            n = read(fds[i], buffer, sizeof(buffer));
-            buffer[n] = 0x00;
+          if( (fds[i] != NOPLUGIN_VALUE) && FD_ISSET(fds[i], &rfds) ){
+            while (1){
+              n = read(fds[i], buffer, sizeof(buffer));
+              if( n == -1 ){
+                if( errno != EAGAIN )
+                  perror("read");
+                break;
+              }
+              
+              // printf("[fd:%d] data from plugin: %d bytes\n", fds[i], n);
+              
+              buffer[n] = 0x00;
+              
+              ai = mrb_gc_arena_save(mrb);
+              r_buffer = mrb_str_buf_new(mrb, n);
+              mrb_str_buf_cat(mrb, r_buffer, buffer, n);
+              
+              // mrb_funcall(mrb, r_output, "tick", 0);
+              mrb_funcall(mrb, r_output, "add", 1, r_buffer);
+              check_exception(mrb);
+              
+              // pp(mrb, r_output, 0);
+              
+              mrb_gc_arena_restore(mrb, ai);
+            }
             
-            ai = mrb_gc_arena_save(mrb);
-            r_buffer = mrb_str_buf_new(mrb, n);
-            mrb_str_buf_cat(mrb, r_buffer, buffer, n);
-            
-            // mrb_funcall(mrb, r_output, "tick", 0);
-            mrb_funcall(mrb, r_output, "add", 1, r_buffer);
-            check_exception(mrb);
-            // printf("data from plugin: %s\n", buffer);
-            
-            // pp(mrb, r_output, 0);
             fds[i] = 0;
-            
-            mrb_gc_arena_restore(mrb, ai);
           }
         }
       }
@@ -189,6 +214,7 @@ int main(int argc, char const *argv[])
     }
     
     mrb_funcall(mrb, r_output, "flush", 0);
+    check_exception(mrb);
   }
   
   for(i= 0; i< plugins_count; i++){

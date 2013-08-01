@@ -1,5 +1,6 @@
 
 #include "d3probe.h"
+#include <errno.h>
 
 // static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
 // {
@@ -18,6 +19,15 @@ static mrb_value plugin_sleep(mrb_state *mrb, mrb_value self)
   usleep((int)(delay * 1000000));
   
   return mrb_nil_value();
+}
+
+static mrb_value plugin_errno(mrb_state *mrb, mrb_value self)
+{
+  mrb_value r_ret;
+  
+  r_ret = mrb_str_new_cstr(mrb, strerror(errno));
+  
+  return r_ret;
 }
 
 
@@ -46,6 +56,7 @@ void setup_api(mrb_state *mrb)
   
   // Kernel
   mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, kernel, "errno_str", plugin_errno, MRB_ARGS_REQ(0));
   
   // D3Probe
   // mrb_define_singleton_method(mrb, class, "report", plugin_report, ARGS_REQ(1));

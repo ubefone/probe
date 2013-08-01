@@ -1,5 +1,20 @@
 
 
+class Struct
+  def to_h
+    ret = {}
+    members.map{|s| s.to_s }.each do |key|
+      val = send(key)
+      if val.is_a?(Struct)
+        ret[key] = val.to_h()
+      else
+        ret[key] = val
+      end
+    end
+    ret
+  end
+end
+
 class AveragedStat
   SAMPLE_SIZE = 5
   
@@ -71,17 +86,64 @@ class AveragedMemoryStats < AveragedStat
 end
 
 
+class AveragedSwapStats < AveragedStat
+  def initialize(sigar)
+    super(sigar, 'swap', :swap_get, SwapStruct)
+  end
+end
+
+
 class TestPlugin < Plugin
   
   def initialize
     super
     @sigar = Sigar.new
+    
+    p [:cpus]
+    @sigar.cpus_info_get().map{|s| s.to_h }.each do |h|
+      p h
+    end
+    
+    p [:filesystems]
+    @sigar.filesystems().map{|s| s.to_h }.each do |h|
+      p h
+    end
+    
+    # p [:network_routes]
+    # @sigar.network_routes().map{|s| s.to_h }.each do |h|
+    #   p h
+    # end
+    
+    p [:sysinfo]
+    p @sigar.sysinfo().to_h()
+    
+    p [:network_interfaces]
+    p @sigar.network_interfaces()
+    
+    p [:mem_get]
+    p @sigar.mem_get()
+    
+    
+    # p @sigar.fs_usage('/').to_h()
+
+    
+    # p @sigar.loadavg().to_h()
+    
+    # p @sigar.uptime()
+    
+    # p @sigar.proc_mem(33).to_h()
+    # p @sigar.proc_time(33).to_h()
+    # p @sigar.proc_state(33).to_h()
+    
+    p [:network_infos]
+    p @sigar.network_infos().to_h()
   end
   
       
   def cycle
     @cpu = AveragedCPUStat.new(@sigar)
     @mem = AveragedMemoryStats.new(@sigar)
+    @swap = AveragedSwapStats.new(@sigar)
     
     pipe._setnonblock(true)
     stats = {
@@ -95,18 +157,20 @@ class TestPlugin < Plugin
       
       @cpu.read()
       @mem.read()
+      @swap.read()
       
       begin
         data = pipe.recv(20)
         
         @cpu.send_stat(self, stats)
         @mem.send_stat(self, stats)
+        @swap.send_stat(self, stats)
         
         
         p [:test, :done]
       rescue => err
         if err.message != "recv"
-          p [:err, err]
+          p [:err, err, err.message]
         end
         # p [:sleep]
       end

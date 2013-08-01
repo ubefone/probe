@@ -9,6 +9,7 @@
 #include "mruby/compile.h"
 #include "mruby/dump.h"
 #include "mruby/variable.h"
+#include "mruby/numeric.h"
 #include <stdio.h>
 #include <unistd.h>
 // #include <stdlib.h>
@@ -18,7 +19,6 @@
 #include <pthread.h>
 #include <sys/socket.h>
 
-#define SCHECK(what) if(what == -1){ fprintf(stderr, "error in " #what "\n"); }
 #define C_CHECK(MSG, what) if(what == -1){ perror(MSG);  return -1; }
 
 

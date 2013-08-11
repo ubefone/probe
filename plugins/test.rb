@@ -161,11 +161,12 @@ class TestPlugin < Plugin
         @swap.send_stat(self)
         
         loadavg = @sigar.loadavg()
-        send_metrics('load' => {
+        send_metrics('system' => {
+          'load' => {
             'min1' => loadavg.min1,
             'min5' => loadavg.min5,
             'min15' => loadavg.min15
-          })
+          }})
         
       rescue => err
         if err.message != "recv"

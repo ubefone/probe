@@ -123,15 +123,18 @@ class Output
     puts "\n\nFLUSH\n"
     
     cycle_msg = {
-      type: 'datapoints',
-      app_name: 'system',
-      host: @hostname
+      'type' => 'datapoints',
+      'host' => @hostname
     }
     
     while  msg = @buffer.shift
       # send_msg(msg)
       msg.each do |k, v|
-        cycle_msg[k] = v
+        if cycle_msg[k]
+          cycle_msg[k] = cycle_msg[k].merge(v)
+        else
+          cycle_msg[k] = v
+        end
       end
     end
     

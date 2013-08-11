@@ -23,6 +23,7 @@ MRuby::Build.new do |conf|
   conf.gem github: 'iij/mruby-io'
   conf.gem github: 'iij/mruby-socket'
   conf.gem github: 'mattn/mruby-json'
+  conf.gem '/Users/schmurfy/Dev/personal/mrbgems/mruby-ping'
   
   conf.gem 'main'
   

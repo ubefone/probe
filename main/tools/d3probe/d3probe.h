@@ -33,7 +33,7 @@ void pp(mrb_state *mrb, mrb_value obj, int prompt);
 int execute_compiled_file(mrb_state *mrb, const char *path);
 int execute_file(mrb_state *mrb, const char *path);
 int execute_string(mrb_state *mrb, const char *code);
-int check_exception(mrb_state *mrb);
+int check_exception(const char *msg, mrb_state *mrb);
 
 
 // api setup

@@ -81,9 +81,10 @@ int execute_string(mrb_state *mrb, const char *code)
   return 0;
 }
 
-int check_exception(mrb_state *mrb)
+int check_exception(const char *msg, mrb_state *mrb)
 {
   if (mrb->exc) {
+    printf("An error occured in %s:\n", msg);
     mrb_print_error(mrb);
     return -1;
   }

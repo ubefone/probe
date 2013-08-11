@@ -19,15 +19,7 @@ void *plugin_thread(void *arg)
   Plugin *plugin = (Plugin *)arg;
   
   ret = mrb_funcall(plugin->mrb, plugin->plugin_obj, "cycle", 0);
-  if (plugin->mrb->exc) {
-    if (!mrb_undef_p(ret)) {
-      mrb_print_error(plugin->mrb);
-    }
-  }
-  else {
-    // pp(plugin->mrb, ret, 0);
-  }
-  
+  check_exception("cycle", plugin->mrb);
   return NULL;
 }
 
@@ -194,7 +186,7 @@ int main(int argc, char const *argv[])
               
               // mrb_funcall(mrb, r_output, "tick", 0);
               mrb_funcall(mrb, r_output, "add", 1, r_buffer);
-              check_exception(mrb);
+              check_exception("add", mrb);
               
               // pp(mrb, r_output, 0);
               
@@ -215,7 +207,7 @@ int main(int argc, char const *argv[])
     }
     
     mrb_funcall(mrb, r_output, "flush", 0);
-    check_exception(mrb);
+    check_exception("flush", mrb);
   }
   
   for(i= 0; i< plugins_count; i++){

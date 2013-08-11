@@ -163,8 +163,18 @@ CPUInfoStruct = Struct.new(
   )
 
 @plugin = nil
+@plugin_name = nil
 
 def register_plugin(name, obj)
   @plugin = obj
+  @plugin_name = name
 end
 
+def config(name, &block)
+  if name == :output
+    block.call($output) if $output
+  elsif name == @plugin_name
+    puts "Plugin found, configuring..."
+    block.call(@plugin)
+  end
+end

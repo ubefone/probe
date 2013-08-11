@@ -100,6 +100,8 @@ end
 
 
 class Output
+  attr_accessor :host, :port, :hostname
+  
   def initialize
     @buffer = []
     @socket = UDPSocket.new

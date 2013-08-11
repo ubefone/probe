@@ -32,6 +32,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   plugin->mrb = mrb_open();
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
+  execute_file(plugin->mrb, "config.rb");
   
   C_CHECK("socketpair", socketpair(PF_UNIX, SOCK_DGRAM, 0, fds));
   
@@ -93,6 +94,7 @@ int main(int argc, char const *argv[])
   printf("Initializing core...\n");
   setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
+  execute_file(mrb, "config.rb");
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[plugins_count], "plugins/test.rb"); plugins_count++;

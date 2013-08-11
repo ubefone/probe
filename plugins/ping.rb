@@ -2,17 +2,23 @@ class PingPlugin < Plugin
   def initialize
     @arp = ARPPinger.new('en1')
     @icmp = ICMPPinger.new
+    
+    @icmp_targets = []
+    @arp_targets = []
   end
+  
+  def add_icmp_target(*addr)
+    addr.each{|a| @icmp_targets << a }
+  end
+  
+  def add_arp_target(*addr)
+    addr.each{|a| @arp_targets << a }
+  end
+
     
   def cycle
-    @targets = [
-        # '10.11.20.2',
-        '192.168.0.83'#,
-        # '212.27.48.10'
-      ]
-      
-    @arp.set_targets(@targets)
-    @icmp.set_targets(@targets)
+    @arp.set_targets(@arp_targets)
+    @icmp.set_targets(@icmp_targets)
     
     loop do
       pipe.recv(200)
@@ -21,7 +27,7 @@ class PingPlugin < Plugin
       
       ret = @arp.send_pings(500)
       
-      @targets.each do |host|
+      @arp_targets.each do |host|
         if ret.has_key?(host)
           data[host] = ret[host]
         else

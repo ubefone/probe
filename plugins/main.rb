@@ -120,19 +120,20 @@ class Output
   def flush
     puts "\n\nFLUSH\n"
     
-    # cycle_msg = {
-    #   type: 'datapoints',
-    #   host: @hostname
-    # }
+    cycle_msg = {
+      type: 'datapoints',
+      app_name: 'system',
+      host: @hostname
+    }
     
     while  msg = @buffer.shift
-      msg[:type] = 'datapoint'
-      msg[:host] = @hostname
-      
-      # p msg
-      
-      send_msg(msg)
+      # send_msg(msg)
+      msg.each do |k, v|
+        cycle_msg[k] = v
+      end
     end
+    
+    send_msg(cycle_msg)
     
   end
   

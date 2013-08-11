@@ -52,14 +52,13 @@ class AveragedStat
     ret
   end
   
-  def send_stat(plugin, stats)
-    stats[:res_name] = @name
-    stats[:data].clear()
+  def send_stat(plugin)
+    data = {}
     @keys.each do |name|
-      stats[:data][name] = @last_avg.send(name)
+      data[name] = @last_avg.send(name)
     end
     
-    plugin.send_metrics(stats)
+    plugin.send_metrics(@name => data)
   end
 
 private
@@ -146,12 +145,7 @@ class TestPlugin < Plugin
     @swap = AveragedSwapStats.new(@sigar)
     
     pipe._setnonblock(true)
-    stats = {
-      type:       'datapoint',
-      app_name:   'system',
-      data: {}
-    }
-        
+            
     loop do
       sleep(0.1)
       
@@ -162,12 +156,17 @@ class TestPlugin < Plugin
       begin
         data = pipe.recv(20)
         
-        @cpu.send_stat(self, stats)
-        @mem.send_stat(self, stats)
-        @swap.send_stat(self, stats)
+        @cpu.send_stat(self)
+        @mem.send_stat(self)
+        @swap.send_stat(self)
         
+        loadavg = @sigar.loadavg()
+        send_metrics('load' => {
+            'min1' => loadavg.min1,
+            'min5' => loadavg.min5,
+            'min15' => loadavg.min15
+          })
         
-        p [:test, :done]
       rescue => err
         if err.message != "recv"
           p [:err, err, err.message]

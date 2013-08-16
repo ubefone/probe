@@ -103,7 +103,6 @@ int main(int argc, char const *argv[])
   int plugins_count = 0;
   mrb_state *mrb = mrb_open();
   mrb_value r_output;
-  struct RClass *output_class;
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   mrb_int interval;
   
@@ -119,11 +118,6 @@ int main(int argc, char const *argv[])
   
   
   printf("Instanciating output class...\n");
-  // output_class = mrb_class_get(mrb, "Output");
-  // r_output = mrb_iv_get(mrb, mrb_obj_value(mrb->top_self), output_iv_sym);
-  // r_output = mrb_funcall(mrb, mrb_obj_value(output_class), "new", 0);
-  // protect from GC
-  // mrb_iv_set(mrb, mrb_obj_value(mrb->top_self), output_iv_sym, r_output);
   r_output = mrb_gv_get(mrb, output_gv_sym);
   interval = mrb_fixnum(mrb_funcall(mrb, r_output, "interval", 0));
   

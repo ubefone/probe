@@ -112,7 +112,7 @@ int main(int argc, char const *argv[])
   execute_file(mrb, "config.rb");
   
   printf("Loading plugins...\n");
-  init_plugin_from_file(&plugins[plugins_count], "plugins/test.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
   // init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
   

@@ -109,6 +109,7 @@ class Output
     @host = "127.0.0.1"
     @port = 4000
     @hostname = 'local1'
+    @just_started = true
   end
   
   def add(json)
@@ -126,6 +127,11 @@ class Output
       'type' => 'datapoints',
       'host' => @hostname
     }
+    
+    if @just_started
+      cycle_msg['first'] = true
+      @just_started = false
+    end
     
     while  msg = @buffer.shift
       # send_msg(msg)

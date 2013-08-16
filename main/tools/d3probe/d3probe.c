@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/time.h>
 
 
 
@@ -78,6 +79,20 @@ static void fill_timeout(struct timeval *tv, uint64_t duration)
 
 #define NOPLUGIN_VALUE 0
 
+static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int interval)
+{
+  uint64_t expected = interval * 1000000;
+  uint64_t elapsed_useconds;
+  
+  elapsed_useconds = (end->tv_sec * 1000000 + end->tv_usec) - (start->tv_sec * 1000000 + start->tv_usec);
+  
+  if(expected > elapsed_useconds){
+    usleep(expected - elapsed_useconds);
+  }
+  else {
+    printf("warning: loop execution exceeded interval !\n");
+  }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -90,6 +105,7 @@ int main(int argc, char const *argv[])
   mrb_value r_output;
   struct RClass *output_class;
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
+  mrb_int interval;
   
   printf("Initializing core...\n");
   setup_api(mrb);
@@ -109,6 +125,9 @@ int main(int argc, char const *argv[])
   // protect from GC
   // mrb_iv_set(mrb, mrb_obj_value(mrb->top_self), output_iv_sym, r_output);
   r_output = mrb_gv_get(mrb, output_gv_sym);
+  interval = mrb_fixnum(mrb_funcall(mrb, r_output, "interval", 0));
+  
+  printf("Interval set to %ds\n", (int)interval);
   
   printf("Sending initial report...\n");
   mrb_funcall(mrb, r_output, "send_report", 0);
@@ -128,8 +147,9 @@ int main(int argc, char const *argv[])
     int maxfd = 0, ai;
     struct timeval tv;
     mrb_value r_buffer;
+    struct timeval cycle_started_at, cycle_completed_at;
     
-    sleep(1);
+    gettimeofday(&cycle_started_at, NULL);
     
     bzero(fds, sizeof(int) * MAX_PLUGINS);
     
@@ -210,6 +230,11 @@ int main(int argc, char const *argv[])
     
     mrb_funcall(mrb, r_output, "flush", 0);
     check_exception("flush", mrb);
+    
+    // and now sleep until the next cycle
+    gettimeofday(&cycle_completed_at, NULL);
+    
+    sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }
   
   for(i= 0; i< plugins_count; i++){

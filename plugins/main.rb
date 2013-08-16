@@ -100,7 +100,7 @@ end
 
 
 class Output
-  attr_accessor :host, :port, :hostname
+  attr_accessor :host, :port, :hostname, :interval
   
   def initialize
     @buffer = []

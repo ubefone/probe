@@ -58,7 +58,7 @@ class AveragedStat
       data[name] = @last_avg.send(name)
     end
     
-    plugin.send_metrics(@name => data)
+    plugin.send_metrics('system' => { @name => data })
   end
 
 private

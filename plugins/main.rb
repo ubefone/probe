@@ -121,7 +121,7 @@ class Output
   ##
   # send data
   def flush
-    puts "\n\nFLUSH\n"
+    # puts "\n\nFLUSH\n"
     
     cycle_msg = {
       'type' => 'datapoints',
@@ -149,9 +149,9 @@ class Output
   end
   
   def send_msg(msg)
-    p msg
+    # p msg
     json = JSON::stringify(msg)
-    p [:send_msg, json.bytesize]
+    # p [:send_msg, json.bytesize]
     @socket.send(json, 0, @host, @port)
   end
   

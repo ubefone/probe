@@ -34,25 +34,34 @@ class PingPlugin < Plugin
       unless @arp_targets.empty?
         ret = @arp.send_pings(500)
         
-        data['arp-ping'] = {}
+        data['arp_ping'] = {}
         
         @arp_targets.each do |host|
-          data['arp-ping'][host] = {'reply' => ret.has_key?(host) ? 1 : 0 }
+          data['arp_ping'][host] = {'reply' => ret.has_key?(host) ? 1 : 0 }
         end
         
       end
       
       unless @icmp_targets.empty?
-        ret = @icmp.send_pings(@icmp_timeout, @icmp_count, @icmp_delay)
-        p ret
+        percentiles = [0.5, 0.75, 0.95, 0.98]
+        ret = @icmp.send_pings(@icmp_timeout, @icmp_count, @icmp_delay, percentiles)
+        # p [:ret, ret]
         
-        data['icmp-ping'] = {}
+        data['icmp_ping'] = {}
         
         @icmp_targets.each do |host|
-          data['icmp-ping'][host] = {
-            'latency' => ret[host][0],
+          data['icmp_ping'][host] = {
+            'latency' => ret[host][0] / 1000,
             'loss' => ret[host][1]
           }
+          
+          
+          percentiles.each do |p|
+            v = ret[host][2][p]
+            if v
+              data['icmp_ping'][host]["p#{(p * 100).to_i}"] = v / 1000
+            end
+          end
         end
         
       end

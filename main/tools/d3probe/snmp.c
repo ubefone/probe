@@ -131,7 +131,7 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
   mrb_int i;
   
   
-  mrb_value *r_oids, r_tmp, r_block;
+  mrb_value *r_oids, r_block;
   int r_count;
   
   // mrb_get_args(mrb, "A|&", &r_oids, &r_block);
@@ -144,7 +144,6 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
     size_t oid_len = MAX_OID_LEN;
 
     printf("i: %d, arr: %d\n", i, r_count);
-    // r_tmp = mrb_ary_ref(mrb, r_oids, i);
     mrb_check_type(mrb, r_oids[i], MRB_TT_STRING);
     
     read_objid(RSTRING_PTR(r_oids[i]), oid_name, &oid_len);

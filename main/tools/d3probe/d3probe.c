@@ -74,7 +74,7 @@ static void fill_timeout(struct timeval *tv, uint64_t duration)
   tv->tv_usec = duration;
 }
 
-#define BUFFER_SIZE 500
+#define BUFFER_SIZE 2048
 #define MAX_PLUGINS 10
 
 #define NOPLUGIN_VALUE 0

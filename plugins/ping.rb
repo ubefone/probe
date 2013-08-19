@@ -43,7 +43,7 @@ class PingPlugin < Plugin
       end
       
       unless @icmp_targets.empty?
-        percentiles = [0.5, 0.75, 0.95, 0.98]
+        percentiles = [0.05, 0.25, 0.5, 0.75, 0.95, 0.98]
         ret = @icmp.send_pings(@icmp_timeout, @icmp_count, @icmp_delay, percentiles)
         # p [:ret, ret]
         

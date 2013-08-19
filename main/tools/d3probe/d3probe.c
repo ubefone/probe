@@ -192,6 +192,11 @@ int main(int argc, char const *argv[])
                 break;
               }
               
+              if( n == BUFFER_SIZE ){
+                printf("BUFFER_SIZE is too small, increase it ! (value: %d)\n", BUFFER_SIZE);
+                continue;
+              }
+              
               // printf("[fd:%d] data from plugin: %d bytes\n", fds[i], n);
               
               buffer[n] = 0x00;

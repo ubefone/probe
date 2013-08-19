@@ -2,7 +2,8 @@ class PingPlugin < Plugin
   attr_accessor :icmp_timeout, :icmp_delay, :icmp_count
   
   def initialize
-    @arp = ARPPinger.new('en1')
+    # TODO: param should allow nil
+    # @arp = ARPPinger.new('en1')
     @icmp = ICMPPinger.new
     
     @icmp_targets = []
@@ -23,7 +24,7 @@ class PingPlugin < Plugin
 
     
   def cycle
-    @arp.set_targets(@arp_targets)
+    # @arp.set_targets(@arp_targets)
     @icmp.set_targets(@icmp_targets)
     
     loop do
@@ -31,16 +32,16 @@ class PingPlugin < Plugin
       
       data = {}
       
-      unless @arp_targets.empty?
-        ret = @arp.send_pings(500)
+      # unless @arp_targets.empty?
+      #   ret = @arp.send_pings(500)
         
-        data['arp_ping'] = {}
+      #   data['arp_ping'] = {}
         
-        @arp_targets.each do |host|
-          data['arp_ping'][host] = {'reply' => ret.has_key?(host) ? 1 : 0 }
-        end
+      #   @arp_targets.each do |host|
+      #     data['arp_ping'][host] = {'reply' => ret.has_key?(host) ? 1 : 0 }
+      #   end
         
-      end
+      # end
       
       unless @icmp_targets.empty?
         percentiles = [0.05, 0.25, 0.5, 0.75, 0.95, 0.98]

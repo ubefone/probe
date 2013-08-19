@@ -187,7 +187,7 @@ void setup_snmp_api(mrb_state *mrb)
   struct RClass *c = mrb_define_class(mrb, "SNMP", NULL);
   
   init_snmp("Probe");
-  read_mib("/usr/local/Cellar/net-snmp/5.7.2/share/snmp/mibs/SNMPv2-MIB.txt");
+  read_mib("/usr/local/share/snmp/mibs/SNMPv2-MIB.txt");
   
   mrb_define_method(mrb, c, "initialize", _snmp_init,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "get", _snmp_get,  ARGS_REQ(1));

@@ -32,6 +32,18 @@ MRuby::Build.new do |conf|
      cc.defines = %w(MRB_INT64)
      # cc.defines = %w(MRB_GC_STRESS)
      cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
+     cc.include_paths = [
+        "#{root}/include",
+        "/usr/local/include",
+        "/usr/local/include/libnet11"
+      ]
+   end
+   
+   conf.linker do |linker|
+    linker.library_paths = [
+        "/usr/local/lib",
+        "/usr/local/lib/libnet11"
+      ]
    end
   
   # C compiler settings

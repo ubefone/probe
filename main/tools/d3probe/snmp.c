@@ -46,6 +46,12 @@ static mrb_value _snmp_select(mrb_state *mrb, mrb_value self)
 
     FD_ZERO(&fdset);
     snmp_select_info(&fds, &fdset, &timeout, &block);
+    
+    // printf("block: %d, timeout[%d . %d]\n", block, timeout.tv_sec, timeout.tv_usec);
+    // ignore returned timeout, we only needs the fds
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    
     fds = select(fds, &fdset, NULL, NULL, block ? NULL : &timeout);
     if (fds < 0) {
       perror("select failed");
@@ -122,6 +128,20 @@ static int _snmp_response_cb(int operation, struct snmp_session *sp, int reqid, 
   return 0;
 }
 
+static mrb_value _snmp_load_mib(mrb_state *mrb, mrb_value self)
+{
+  char *path;
+  
+  mrb_get_args(mrb, "z", &path);
+  
+  printf("Loading MIB definitions %s...\n", path);
+  
+  if( read_mib(path) == NULL ){
+    mrb_raisef(mrb, E_ARGUMENT_ERROR, "Unable to load MIB definitions from \"%S\"", mrb_str_new_cstr(mrb, path));
+  }
+  
+  return mrb_nil_value();
+}
 
 static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
 {
@@ -143,7 +163,7 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
     oid oid_name[MAX_OID_LEN];
     size_t oid_len = MAX_OID_LEN;
 
-    printf("i: %d, arr: %d\n", i, r_count);
+    // printf("i: %d, arr: %d\n", i, r_count);
     mrb_check_type(mrb, r_oids[i], MRB_TT_STRING);
     
     read_objid(RSTRING_PTR(r_oids[i]), oid_name, &oid_len);
@@ -191,5 +211,6 @@ void setup_snmp_api(mrb_state *mrb)
   mrb_define_method(mrb, c, "initialize", _snmp_init,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "get", _snmp_get,  ARGS_REQ(1));
   
+  mrb_define_singleton_method(mrb, c, "load_mibs", _snmp_load_mib,  ARGS_REQ(1));
   mrb_define_singleton_method(mrb, c, "select", _snmp_select, ARGS_REQ(0));
 }

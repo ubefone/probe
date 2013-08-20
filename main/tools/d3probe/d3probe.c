@@ -30,6 +30,8 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
 {
   int fds[2], flags;
   
+  printf("Loading plugin %s...\n", path);
+  
   plugin->mrb = mrb_open();
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
@@ -114,7 +116,7 @@ int main(int argc, char const *argv[])
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
-  // init_plugin_from_file(&plugins[1], "plugins/test2.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
   
   
   printf("Instanciating output class...\n");

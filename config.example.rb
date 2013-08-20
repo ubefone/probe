@@ -28,3 +28,11 @@ plugin('ping') do |p|
   p.add_arp_target('10.11.20.253')
 end
   
+plugin('snmp') do |p|
+  # p.load_mibs('path/to/mib')
+  
+  p.query('127.0.0.1', {
+    'SNMPv2-MIB::sysName.0' => 'sysname',
+    'SNMPv2-MIB::sysServices.0' => 'sysservice'
+  })
+end

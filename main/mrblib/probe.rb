@@ -21,3 +21,7 @@ def config(name, &block)
     block.call(@plugin)
   end
 end
+
+def plugin(*args, &block)
+  config(*args, &block)
+end

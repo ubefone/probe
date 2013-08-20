@@ -15,7 +15,7 @@ end
 
 
 # config for ping module
-config('ping') do |p|
+plugin('ping') do |p|
   # icmp ping
   p.icmp_count = 10
   p.icmp_delay = 80

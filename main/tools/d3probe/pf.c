@@ -43,7 +43,7 @@ static mrb_value _pf_stats(mrb_state *mrb, mrb_value self)
   
   ai = mrb_gc_arena_save(mrb);
   
-  for( i =0; i< rules; i++){
+  for( i = 0; i< rules_count; i++){
     mrb_value r_tmp;
     pr.nr = i;
     if( ioctl(dev, DIOCGETRULE, &pr) )

@@ -35,6 +35,7 @@ static mrb_value _pf_stats(mrb_state *mrb, mrb_value self)
   struct pfioc_rule pr;
   struct RClass *c = mrb_class_get(mrb, "PacketFilterLabelStats");
   
+  bzero(&pr, sizeof(pr));
   if( ioctl(dev, DIOCGETRULES, &pr) )
     ERROUT("Unable to list rules");
   

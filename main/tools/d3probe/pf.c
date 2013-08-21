@@ -12,7 +12,7 @@
 static int dev = -1;
 
 #define ERROUT(MSG) { puts(MSG); goto error; }
-#define ERROUTF(FORMAT, ARGS...) { printf(FORMAT # "\n", ## ARGS); goto error; }
+#define ERROUTF(FORMAT, ARGS...) { printf(FORMAT "\n", ## ARGS); goto error; }
 
 static mrb_value _pf_init(mrb_state *mrb, mrb_value self)
 {

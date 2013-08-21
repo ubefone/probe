@@ -41,6 +41,7 @@ void setup_api(mrb_state *mrb);
 void setup_sigar_api(mrb_state *mrb);
 void setup_plugin_api(mrb_state *mrb);
 void setup_snmp_api(mrb_state *mrb);
+void setup_pf_api(mrb_state *mrb);
 
 
 // gc

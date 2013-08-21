@@ -117,6 +117,7 @@ int main(int argc, char const *argv[])
   init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[plugins_count], "plugins/pf.rb"); plugins_count++;
   
   
   printf("Instanciating output class...\n");

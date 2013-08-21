@@ -65,6 +65,7 @@ void setup_api(mrb_state *mrb)
   setup_plugin_api(mrb);
   setup_sigar_api(mrb);
   setup_snmp_api(mrb);
+  setup_pf_api(mrb);
   
   mrb_gc_arena_restore(mrb, ai);
 }

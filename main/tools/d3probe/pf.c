@@ -40,7 +40,7 @@ static mrb_value _pf_stats(mrb_state *mrb, mrb_value self)
     ERROUT("Unable to list rules");
   
   rules_count = pr.nr;
-  r_ret = mrb_ary_new_capa(mrb, rules_count);
+  r_ret = mrb_ary_new(mrb);
   
   ai = mrb_gc_arena_save(mrb);
   
@@ -50,19 +50,19 @@ static mrb_value _pf_stats(mrb_state *mrb, mrb_value self)
     if( ioctl(dev, DIOCGETRULE, &pr) )
       ERROUTF("Unable to query rule %d", i);
     
-    r_tmp = mrb_funcall(mrb, mrb_obj_value(c), "new", 6,
-        mrb_str_new_cstr(mrb, pr.rule.label),
-        mrb_fixnum_value(pr.rule.evaluations),
-        mrb_fixnum_value(pr.rule.packets[0]),
-        mrb_fixnum_value(pr.rule.bytes[0]),
-        mrb_fixnum_value(pr.rule.packets[1]),
-        mrb_fixnum_value(pr.rule.bytes[1])
-      );
-    
-    mrb_ary_set(mrb, r_ret, i, r_tmp);
-    
-    
-    mrb_gc_arena_restore(mrb, ai);
+    if( pr.rule.label[0] ){
+      r_tmp = mrb_funcall(mrb, mrb_obj_value(c), "new", 6,
+          mrb_str_new_cstr(mrb, pr.rule.label),
+          mrb_fixnum_value(pr.rule.evaluations),
+          mrb_fixnum_value(pr.rule.packets[0]),
+          mrb_fixnum_value(pr.rule.bytes[0]),
+          mrb_fixnum_value(pr.rule.packets[1]),
+          mrb_fixnum_value(pr.rule.bytes[1])
+        );
+      
+      mrb_ary_push(mrb, r_ret, r_tmp);
+      mrb_gc_arena_restore(mrb, ai);
+    }
   }
   
   return r_ret;

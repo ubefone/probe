@@ -7,7 +7,7 @@ class PacketFilter
       existing_st = ret[st.label]
       
       if existing_st
-        existing_st.members.each do |field|
+        existing_st.members.reject{|sym| sym == :label }.each do |field|
           existing_st.send("#{field}=", existing_st.send(field) + st.send(field))
         end
       else

@@ -72,7 +72,7 @@ error:
 
 void setup_pf_api(mrb_state *mrb)
 {
-  struct RClass *c = mrb_class_get(mrb, "PacketFilter");
+  struct RClass *c = mrb_define_class(mrb, "PacketFilter", NULL);
   
   mrb_define_method(mrb, c, "initialize", _pf_init,  ARGS_REQ(0));
   mrb_define_method(mrb, c, "_stats", _pf_stats,  ARGS_REQ(0));

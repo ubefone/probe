@@ -194,7 +194,6 @@ static mrb_value _sigar_net_routes(mrb_state *mrb, mrb_value self)
 
 static mrb_value _sigar_net_infos(mrb_state *mrb, mrb_value self)
 {
-  int i;
   sigar_state_t *state = DATA_PTR(self);
   sigar_net_info_t net_infos;
   
@@ -213,7 +212,6 @@ static mrb_value _sigar_net_infos(mrb_state *mrb, mrb_value self)
 
 static mrb_value _sigar_sysinfo(mrb_state *mrb, mrb_value self)
 {
-  int i;
   sigar_state_t *state = DATA_PTR(self);
   sigar_sys_info_t infos;
   

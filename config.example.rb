@@ -36,3 +36,7 @@ plugin('snmp') do |p|
     'SNMPv2-MIB::sysServices.0' => 'sysservice'
   })
 end
+
+plugin('sigar') do |p|
+  p.monitor_interfaces('eth0', 'tun1')
+end

@@ -406,6 +406,38 @@ static mrb_value _sigar_proc_state(mrb_state *mrb, mrb_value self)
 }
 
 
+static mrb_value _sigar_if_stats(mrb_state *mrb, mrb_value self)
+{
+  char *ifname;
+  sigar_state_t *state = DATA_PTR(self);
+  sigar_net_interface_stat_t ifstats;
+  
+  struct RClass *c = mrb_class_get(mrb, "NetInterfaceState");
+  
+  mrb_get_args(mrb, "z", &ifname);
+  
+  CHK( sigar_net_interface_stat_get(state->sigar, ifname, &ifstats) );
+  
+  return mrb_funcall(mrb, mrb_obj_value(c), "new", 14,
+      mrb_fixnum_value(ifstats.rx_packets),
+      mrb_fixnum_value(ifstats.rx_bytes),
+      mrb_fixnum_value(ifstats.rx_errors),
+      mrb_fixnum_value(ifstats.rx_dropped),
+      mrb_fixnum_value(ifstats.rx_overruns),
+      mrb_fixnum_value(ifstats.rx_frame),
+      
+      mrb_fixnum_value(ifstats.tx_packets),
+      mrb_fixnum_value(ifstats.tx_bytes),
+      mrb_fixnum_value(ifstats.tx_errors),
+      mrb_fixnum_value(ifstats.tx_dropped),
+      mrb_fixnum_value(ifstats.tx_overruns),
+      mrb_fixnum_value(ifstats.tx_collisions),
+      mrb_fixnum_value(ifstats.tx_carrier),
+      
+      mrb_fixnum_value(ifstats.speed)
+    );
+}
+
 static mrb_value _sigar_fs_usage(mrb_state *mrb, mrb_value self)
 {
   char *dirname;
@@ -481,6 +513,8 @@ void setup_sigar_api(mrb_state *mrb)
   mrb_define_method(mrb, c, "loadavg", _sigar_loadavg,  ARGS_REQ(0));
   
   mrb_define_method(mrb, c, "fs_usage", _sigar_fs_usage,  ARGS_REQ(1));
+  
+  mrb_define_method(mrb, c, "if_stats", _sigar_if_stats,  ARGS_REQ(1));
   
   mrb_define_method(mrb, c, "proc_mem", _sigar_proc_mem,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "proc_time", _sigar_proc_time,  ARGS_REQ(1));

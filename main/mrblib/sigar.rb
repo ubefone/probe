@@ -126,6 +126,27 @@ NetworkRouteStruct = Struct.new(
     :ifname
   )
 
+NetInterfaceState = Struct.new(
+    # received
+    :rx_packets,
+    :rx_bytes,
+    :rx_errors,
+    :rx_dropped,
+    :rx_overruns,
+    :rx_frame,
+    
+    # transmitted
+    :tx_packets,
+    :tx_bytes,
+    :tx_errors,
+    :tx_dropped,
+    :tx_overruns,
+    :tx_collisions,
+    :tx_carrier,
+    
+    :speed
+  )
+
 # unit: MB
 SwapStruct = Struct.new(
     # :total,

@@ -22,19 +22,21 @@ class SnmpPlugin < Plugin
       
       pipe.recv(200)
       
-      @snmps.each do |host, snmp|
-        ret[host] = {}
-        snmp.obj.get(*snmp.mibs.keys) do |rr|
-          h = {}
-          rr.each do |k, v|
-            h[snmp.mibs[k]] = parse_value(v)
+      unless @snmps.empty?
+        @snmps.each do |host, snmp|
+          ret[host] = {}
+          snmp.obj.get(*snmp.mibs.keys) do |rr|
+            h = {}
+            rr.each do |k, v|
+              h[snmp.mibs[k]] = parse_value(v)
+            end
+            ret[host] = h
           end
-          ret[host] = h
         end
+        
+        # wait for the responses
+        SNMP.select()
       end
-      
-      # wait for the responses
-      SNMP.select()
       
       send_metrics('snmp' => ret)
     end

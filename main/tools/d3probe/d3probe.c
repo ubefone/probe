@@ -1,11 +1,12 @@
 
 #include "d3probe.h"
 
+#include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/time.h>
 
-
+static char *config_path;
 
 
 mrb_value wrap_io(mrb_state *mrb, int fd)
@@ -35,7 +36,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   plugin->mrb = mrb_open();
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
-  execute_file(plugin->mrb, "config.rb");
+  execute_file(plugin->mrb, config_path);
   
   C_CHECK("socketpair", socketpair(PF_UNIX, SOCK_DGRAM, 0, fds));
   
@@ -108,10 +109,18 @@ int main(int argc, char const *argv[])
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   mrb_int interval;
   
+  if( argc != 2 ){
+    printf("Usage: %s <config_path>\n", argv[0]);
+    exit(1);
+  }
+  
+  config_path = argv[1];
+  
+  
   printf("Initializing core...\n");
   setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
-  execute_file(mrb, "config.rb");
+  execute_file(mrb, config_path);
   
   printf("Loading plugins...\n");
   init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;

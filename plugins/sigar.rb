@@ -52,13 +52,11 @@ class AveragedStat
     ret
   end
   
-  def send_stat(plugin)
-    data = {}
+  def add_stats(ret)
+    ret[@name] = {}
     @keys.each do |name|
-      data[name] = @last_avg.send(name)
+      ret[@name][name] = @last_avg.send(name)
     end
-    
-    plugin.send_metrics('system' => { @name => data })
   end
 
 private
@@ -136,8 +134,14 @@ class TestPlugin < Plugin
     
     p [:network_infos]
     p @sigar.network_infos().to_h()
+    
+    
+    @monitored_interfaces = []
   end
   
+  def monitor_interfaces(*names)
+    @monitored_interfaces = names
+  end
       
   def cycle
     @cpu = AveragedCPUStat.new(@sigar)
@@ -155,18 +159,33 @@ class TestPlugin < Plugin
       
       begin
         data = pipe.recv(20)
+        data = {}
         
-        @cpu.send_stat(self)
-        @mem.send_stat(self)
-        @swap.send_stat(self)
+        @cpu.add_stats(data)
+        @mem.add_stats(data)
+        @swap.add_stats(data)
         
         loadavg = @sigar.loadavg()
-        send_metrics('system' => {
-          'load' => {
+        data['load'] = {
             'min1' => loadavg.min1,
             'min5' => loadavg.min5,
             'min15' => loadavg.min15
-          }})
+          }
+        
+        
+        data = {'system' => data}
+        
+        unless @monitored_interfaces.empty?
+          data['interfaces'] = {}
+          @monitored_interfaces.each do |ifname|
+            stats = @sigar.if_stats(ifname)
+            data['interfaces'][ifname] = stats.to_h()
+          end
+          
+        end
+        
+        
+        send_metrics(data)
         
       rescue => err
         if err.message != "recv"
@@ -180,4 +199,4 @@ class TestPlugin < Plugin
   end
 end
 
-register_plugin('test', TestPlugin.new)
+register_plugin('sigar', TestPlugin.new)

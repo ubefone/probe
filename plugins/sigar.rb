@@ -92,6 +92,8 @@ end
 
 class TestPlugin < Plugin
   
+  attr_accessor :loop_delay
+  
   def initialize
     super
     @sigar = Sigar.new
@@ -137,6 +139,8 @@ class TestPlugin < Plugin
     
     
     @monitored_interfaces = []
+    
+    @loop_delay = 0.2
   end
   
   def monitor_interfaces(*names)
@@ -151,7 +155,7 @@ class TestPlugin < Plugin
     pipe._setnonblock(true)
             
     loop do
-      sleep(0.1)
+      sleep(@loop_delay)
       
       @cpu.read()
       @mem.read()

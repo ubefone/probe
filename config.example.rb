@@ -38,5 +38,12 @@ plugin('snmp') do |p|
 end
 
 plugin('sigar') do |p|
+  # values are collectd in continue and averaged to be
+  # then sent on each interval.
+  # lower values yield higher precision but also higher
+  # cpu usage.
+  p.loop_delay = 0.3
+  
+  # which network interfaces to gather stats for
   p.monitor_interfaces('eth0', 'tun1')
 end

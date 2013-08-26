@@ -251,6 +251,8 @@ static mrb_value _sigar_net_interfaces(mrb_state *mrb, mrb_value self)
     mrb_gc_arena_restore(mrb, ai);
   }
   
+  sigar_net_interface_list_destroy(state->sigar, &iflist);
+  
   return r_ret;
 }
 

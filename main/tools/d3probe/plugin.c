@@ -3,12 +3,12 @@
 
 
 
-// static void plugin_state_free(mrb_state *mrb, void *ptr)
-// {
-//   mrb_free(mrb, ptr);
-// }
+static void plugin_state_free(mrb_state *mrb, void *ptr)
+{
+  mrb_free(mrb, ptr);
+}
 
-// static struct mrb_data_type plugin_state_type = { "Plugin", plugin_state_free };
+static struct mrb_data_type plugin_state_type = { "Plugin", plugin_state_free };
 
 
 static mrb_value plugin_initialize(mrb_state *mrb, mrb_value self)
@@ -16,7 +16,7 @@ static mrb_value plugin_initialize(mrb_state *mrb, mrb_value self)
   Plugin *plugin = mrb_malloc(mrb, sizeof(Plugin));
   
   DATA_PTR(self)  = (void*)plugin;
-  // DATA_TYPE(self) = &plugin_state_type;
+  DATA_TYPE(self) = &plugin_state_type;
   
   return self;
 }

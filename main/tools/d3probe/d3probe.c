@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <signal.h>
 
-static char *config_path;
+static const char *config_path;
 
 
 mrb_value wrap_io(mrb_state *mrb, int fd)
@@ -161,7 +161,6 @@ int main(int argc, char const *argv[])
     }
   }
   
-  puts("SIGNAL");
   if( signal(SIGINT, clean_exit) == SIG_ERR){
     perror("signal");
     exit(1);

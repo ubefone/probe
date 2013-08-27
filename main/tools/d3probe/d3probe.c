@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/time.h>
+#include <signal.h>
 
 static char *config_path;
 
@@ -97,6 +98,15 @@ static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int inte
   }
 }
 
+
+static uint8_t running = 1;
+
+void clean_exit(int sig)
+{
+  puts("Exiting...");
+  running = 0;
+}
+
 int main(int argc, char const *argv[])
 {
   fd_set rfds;
@@ -151,7 +161,13 @@ int main(int argc, char const *argv[])
     }
   }
   
-  while(1){
+  puts("SIGNAL");
+  if( signal(SIGINT, clean_exit) == SIG_ERR){
+    perror("signal");
+    exit(1);
+  }
+  
+  while(running){
     int fds[MAX_PLUGINS];
     int maxfd = 0, ai;
     struct timeval tv;
@@ -251,17 +267,17 @@ int main(int argc, char const *argv[])
     sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }
   
-  for(i= 0; i< plugins_count; i++){
-    printf("== joining thread %d\n", i);
-    if( pthread_join(plugins[i].thread, NULL) < 0){
-      fprintf(stderr, "join ailed\n");
-    }
-  }
+  // for(i= 0; i< plugins_count; i++){
+  //   printf("== joining thread %d\n", i);
+  //   if( pthread_join(plugins[i].thread, NULL) < 0){
+  //     fprintf(stderr, "join ailed\n");
+  //   }
+  // }
   
-  puts("Sleeping...\n");
-  sleep(10);
+  // puts("Sleeping...\n");
+  // sleep(10);
   
-  printf("completed !\n");
+  printf("Exited !\n");
   
   return 0;
 }

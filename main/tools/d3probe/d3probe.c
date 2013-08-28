@@ -284,7 +284,11 @@ int main(int argc, char const *argv[])
     if( pthread_join(plugins[i].thread, NULL) < 0){
       fprintf(stderr, "join ailed\n");
     }
+    
+    mrb_close(plugins[i].mrb);
   }
+  
+  mrb_close(mrb);
   
   printf("Exited !\n");
   return 0;

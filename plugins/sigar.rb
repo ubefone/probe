@@ -162,7 +162,9 @@ class TestPlugin < Plugin
       @swap.read()
       
       begin
-        data = pipe.recv(20)
+        cmd = wait_command()
+        break if cmd == "exit"
+        
         data = {}
         
         @cpu.add_stats(data)

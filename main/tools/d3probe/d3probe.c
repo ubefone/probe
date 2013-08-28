@@ -266,18 +266,20 @@ int main(int argc, char const *argv[])
     sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }
   
-  // for(i= 0; i< plugins_count; i++){
-  //   printf("== joining thread %d\n", i);
-  //   if( pthread_join(plugins[i].thread, NULL) < 0){
-  //     fprintf(stderr, "join ailed\n");
-  //   }
-  // }
+  printf("Canceling all threads...\n");
+  strcpy(buffer, "exit");
+  for(i= 0; i< plugins_count; i++){
+    C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
+  }
   
-  // puts("Sleeping...\n");
-  // sleep(10);
+  for(i= 0; i< plugins_count; i++){
+    printf("  - joining thread %d\n", i);
+    if( pthread_join(plugins[i].thread, NULL) < 0){
+      fprintf(stderr, "join ailed\n");
+    }
+  }
   
   printf("Exited !\n");
-  
   return 0;
 }
 

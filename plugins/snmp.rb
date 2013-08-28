@@ -17,10 +17,8 @@ class SnmpPlugin < Plugin
   end
     
   def cycle
-    loop do
+    simple_loop do
       ret = {}
-      
-      pipe.recv(200)
       
       unless @snmps.empty?
         @snmps.each do |host, snmp|

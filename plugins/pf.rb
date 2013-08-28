@@ -35,13 +35,9 @@ class PacketFilterPlugin < Plugin
   end
   
   def cycle
-    loop do
+    simple_loop do
       ret = {}
-      pipe.recv(200)
-      
-      p @pf.stats
-      
-      send_metrics('pf_labels' => ret)
+      send_metrics('pf_labels' => @pf.stats)
     end
   end
 end

@@ -27,9 +27,7 @@ class PingPlugin < Plugin
     # @arp.set_targets(@arp_targets)
     @icmp.set_targets(@icmp_targets)
     
-    loop do
-      pipe.recv(200)
-      
+    simple_loop do
       data = {}
       
       # unless @arp_targets.empty?

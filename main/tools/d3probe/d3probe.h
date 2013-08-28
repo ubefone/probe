@@ -48,6 +48,11 @@ void setup_pf_api(mrb_state *mrb);
 void protect_register(mrb_state *mrb, mrb_value v);
 void protect_unregister(mrb_state *mrb, mrb_value v);
 
+// profiler
+#ifdef MEMORY_PROFILE
+void *profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud);
+void dump_state(mrb_state *mrb);
+#endif
 
 
 typedef struct {

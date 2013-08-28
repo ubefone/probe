@@ -17,6 +17,7 @@ MRuby::Build.new do |conf|
   conf.gem core: "mruby-print"
   conf.gem core: "mruby-struct"
   conf.gem core: "mruby-numeric-ext"
+  # conf.gem core: "mruby-objectspace"
   # conf.gem core: "mruby-enum-ext"
   # conf.gem core: "mruby-string-ext"
   
@@ -33,6 +34,7 @@ MRuby::Build.new do |conf|
      # cc.defines = %w(MRB_GC_STRESS)
      cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
      cc.include_paths = [
+    # MEMORY_PROFILE
         "#{root}/include",
         "/usr/local/include",
         "/usr/local/include/libnet11"

@@ -33,8 +33,11 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   int fds[2], flags;
   
   printf("Loading plugin %s...\n", path);
-  
+#ifdef MEMORY_PROFILE
+  plugin->mrb = mrb_open_allocf(profiler_allocf, path);
+#else
   plugin->mrb = mrb_open();
+#endif
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
   execute_file(plugin->mrb, config_path);
@@ -114,7 +117,11 @@ int main(int argc, char const *argv[])
   int i, n;
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
+#ifdef MEMORY_PROFILE
+  mrb_state *mrb = mrb_open_allocf(profiler_allocf, "main");
+#else
   mrb_state *mrb = mrb_open();
+#endif
   mrb_value r_output;
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   mrb_int interval;
@@ -133,6 +140,7 @@ int main(int argc, char const *argv[])
   execute_file(mrb, config_path);
   
   printf("Loading plugins...\n");
+  // init_plugin_from_file(&plugins[plugins_count], "plugins/dummy.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
@@ -254,7 +262,6 @@ int main(int argc, char const *argv[])
       else {
         perror("select");
       }
-      
     }
     
     mrb_funcall(mrb, r_output, "flush", 0);
@@ -262,6 +269,14 @@ int main(int argc, char const *argv[])
     
     // and now sleep until the next cycle
     gettimeofday(&cycle_completed_at, NULL);
+    
+  #ifdef MEMORY_PROFILE
+    // dump VMS state
+    dump_state(mrb);
+    for(i= 0; i< plugins_count; i++){
+      dump_state(plugins[i].mrb);
+    }
+  #endif
     
     sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }

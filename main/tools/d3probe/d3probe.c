@@ -33,11 +33,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   int fds[2], flags;
   
   printf("Loading plugin %s...\n", path);
-#ifdef MEMORY_PROFILE
   plugin->mrb = mrb_open_allocf(profiler_allocf, path);
-#else
-  plugin->mrb = mrb_open();
-#endif
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
   execute_file(plugin->mrb, config_path);
@@ -117,11 +113,7 @@ int main(int argc, char const *argv[])
   int i, n;
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
-#ifdef MEMORY_PROFILE
   mrb_state *mrb = mrb_open_allocf(profiler_allocf, "main");
-#else
-  mrb_state *mrb = mrb_open();
-#endif
   mrb_value r_output;
   mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
   mrb_int interval;

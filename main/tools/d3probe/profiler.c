@@ -1,10 +1,29 @@
-#ifdef MEMORY_PROFILE
-
 #include "d3probe.h"
 #include <stdlib.h>
-#include <execinfo.h>
 
 uint8_t show_allocs = 0;
+
+
+void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud)
+{
+  if (size == 0) {
+    // printf("[%s] free()\n", (const char *)ud);
+    free(p);
+    return NULL;
+  }
+  else {
+    // if( show_allocs && (size > 1000) ){
+      // printf("[%s] malloc(%zd)\n", (const char *)ud, size);
+      // print_backtrace();
+    // }
+    return realloc(p, size);
+  }
+}
+
+
+#ifdef MEMORY_PROFILE
+
+#include <execinfo.h>
 
 void print_backtrace()
 {
@@ -17,22 +36,6 @@ void print_backtrace()
   }
   
   free(strs);
-}
-
-void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud)
-{
-  if (size == 0) {
-    // printf("[%s] free()\n", (const char *)ud);
-    free(p);
-    return NULL;
-  }
-  else {
-    if( show_allocs && (size > 1000) ){
-      // printf("[%s] malloc(%zd)\n", (const char *)ud, size);
-      // print_backtrace();
-    }
-    return realloc(p, size);
-  }
 }
 
 void dump_state(mrb_state *mrb)

@@ -282,7 +282,7 @@ int main(int argc, char const *argv[])
   for(i= 0; i< plugins_count; i++){
     printf("  - joining thread %d\n", i);
     if( pthread_join(plugins[i].thread, NULL) < 0){
-      fprintf(stderr, "join ailed\n");
+      fprintf(stderr, "join failed\n");
     }
     
     mrb_close(plugins[i].mrb);

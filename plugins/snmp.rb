@@ -11,7 +11,7 @@ class SnmpPlugin < Plugin
   
   def query(host, mibs = {})
     @snmps[host] = SnmpHost.new(
-        SNMP.new('127.0.0.1'),
+        SNMP.new(host),
         mibs
       )
   end
@@ -34,6 +34,10 @@ class SnmpPlugin < Plugin
         
         # wait for the responses
         SNMP.select()
+        
+        @snmps.each do |_, snmp|
+          snmp.obj.cleanup()
+        end
       end
       
       send_metrics('snmp' => ret)

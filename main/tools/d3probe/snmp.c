@@ -4,9 +4,15 @@
 #include <net-snmp/net-snmp-includes.h>
 
 
+typedef struct {
+  struct snmp_session master_session;
+} snmp_state_t;
+
+
 static void snmp_state_free(mrb_state *mrb, void *ptr)
 {
-  snmp_close((struct snmp_session*) ptr);
+  snmp_state_t *state = (snmp_state_t *) ptr;
+  free(state->master_session.peername);
 }
 
 static struct mrb_data_type snmp_state = { "Snmp", snmp_state_free };
@@ -15,19 +21,18 @@ static struct mrb_data_type snmp_state = { "Snmp", snmp_state_free };
 
 static mrb_value _snmp_init(mrb_state *mrb, mrb_value self)
 {
+  snmp_state_t *state = mrb_malloc(mrb, sizeof(snmp_state_t));
   char *address;
-  struct snmp_session temp, *session ;
   
   mrb_get_args(mrb, "z", &address);
   
-  snmp_sess_init(&temp);
-  temp.version = SNMP_VERSION_1;
-  temp.community = (u_char*) "public";
-  temp.community_len = strlen((char*) temp.community);
-  temp.peername = address;
-  session = snmp_open(&temp);
+  snmp_sess_init(&state->master_session);
+  state->master_session.version = SNMP_VERSION_2c;
+  state->master_session.community = (u_char*) "public";
+  state->master_session.community_len = strlen((char*) state->master_session.community);
+  state->master_session.peername = strdup(address);
   
-  DATA_PTR(self)  = (void*)session;
+  DATA_PTR(self)  = (void*)state;
   DATA_TYPE(self) = &snmp_state;
   
   return self;
@@ -52,12 +57,13 @@ static mrb_value _snmp_select(mrb_state *mrb, mrb_value self)
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
     
-    fds = select(fds, &fdset, NULL, NULL, block ? NULL : &timeout);
+    fds = select(fds, &fdset, NULL, NULL, &timeout);
     if (fds < 0) {
       perror("select failed");
       break;
     }
     else if (fds == 0) {
+      snmp_timeout();
       break;
     }
     else {
@@ -90,8 +96,8 @@ static mrb_value _snmp_sync_response(mrb_state *mrb, struct snmp_pdu *response, 
   
   for (vars = response->variables; vars != NULL; vars = vars->next_variable) {
     mrb_value r_key, r_value;
-    char *val_buf   = (char *)malloc(sizeof(char) * MAX_OID_LEN);
-    char *name_buf  = (char *)malloc(sizeof(char) * MAX_OID_LEN);
+    char *val_buf   = (char *)mrb_malloc(mrb, sizeof(char) * MAX_OID_LEN);
+    char *name_buf  = (char *)mrb_malloc(mrb, sizeof(char) * MAX_OID_LEN);
     snprint_objid(name_buf, MAX_OID_LEN, vars->name, vars->name_length);
     snprint_value(val_buf, MAX_OID_LEN, vars->name, vars->name_length, vars);
     
@@ -115,15 +121,22 @@ static mrb_value _snmp_sync_response(mrb_state *mrb, struct snmp_pdu *response, 
 
 static int _snmp_response_cb(int operation, struct snmp_session *sp, int reqid, struct snmp_pdu *pdu, void *data)
 {
-  struct snmp_cb_args *cb_args = (struct snmp_cb_args*) data;
-  mrb_value r_ret;
-  mrb_state *mrb = cb_args->mrb;  
-  r_ret = _snmp_sync_response(mrb, pdu, 0);
-  
-  mrb_funcall(mrb, cb_args->cb_block, "call", 1, r_ret);
-  mrb_free(mrb, cb_args);
-  
-  protect_unregister(mrb, cb_args->cb_block);
+  if( operation == NETSNMP_CALLBACK_OP_RECEIVED_MESSAGE ){
+    struct snmp_cb_args *cb_args = (struct snmp_cb_args*) data;
+    mrb_value r_ret;
+    mrb_state *mrb = cb_args->mrb;
+    r_ret = _snmp_sync_response(mrb, pdu, 0);
+    
+    printf("[reqid: %d] snmp_callback, response received\n", reqid);
+    mrb_funcall(mrb, cb_args->cb_block, "call", 1, r_ret);
+    
+    protect_unregister(mrb, cb_args->cb_block);
+    
+    // snmp_close(sp);
+  }
+  else {
+    printf("[reqid: %d] snmp_callback, operation: %d\n", reqid, operation);
+  }
   
   return 0;
 }
@@ -145,7 +158,8 @@ static mrb_value _snmp_load_mib(mrb_state *mrb, mrb_value self)
 
 static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
 {
-  struct snmp_session *session = DATA_PTR(self);
+  snmp_state_t *state = DATA_PTR(self);
+  struct snmp_session *session;
   struct snmp_pdu *pdu;
   int status;
   mrb_int i;
@@ -156,6 +170,12 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
   
   // mrb_get_args(mrb, "A|&", &r_oids, &r_block);
   mrb_get_args(mrb, "*|&", &r_oids, &r_count, &r_block);
+  
+  session = snmp_open(&state->master_session);
+  if( session == NULL ){
+    snmp_perror("snmp_open");
+    goto error;
+  }
   
   pdu = snmp_pdu_create(SNMP_MSG_GET);
   
@@ -181,6 +201,8 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
       snmp_free_pdu(response);
       return r_ret;
     }
+    
+    snmp_close(session);
   }
   else {
     struct snmp_cb_args *cb_args = mrb_malloc(mrb, sizeof(struct snmp_cb_args));
@@ -192,10 +214,20 @@ static mrb_value _snmp_get(mrb_state *mrb, mrb_value self)
     
     // asynchronous
     status = snmp_async_send(session, pdu, _snmp_response_cb, (void*)cb_args);
+    if( status == 0 ){
+      char *error;
+      int err1, err2;
+      snmp_error(session, &err1, &err2, &error);
+      printf("snmp_async_send error: %s\n", error);
+      snmp_free_pdu(pdu);
+    }
+    else {
+      printf("snmp request sent: %d\n", status);
+    }
   }
 
     
-  
+error:
   return mrb_nil_value();
 }
 

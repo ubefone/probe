@@ -84,7 +84,7 @@ static void fill_timeout(struct timeval *tv, uint64_t duration)
 
 static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int interval)
 {
-  uint64_t expected = interval * 1000000;
+  uint64_t expected = interval * 1000;
   uint64_t elapsed_useconds;
   
   elapsed_useconds = (end->tv_sec * 1000000 + end->tv_usec) - (start->tv_sec * 1000000 + start->tv_usec);

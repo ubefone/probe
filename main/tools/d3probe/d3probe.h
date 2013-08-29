@@ -12,12 +12,17 @@
 #include "mruby/numeric.h"
 #include <stdio.h>
 #include <unistd.h>
-// #include <stdlib.h>
+#include <stdlib.h>
 // #include <string.h>
+#include <errno.h>
 #include <math.h>
 
 #include <pthread.h>
 #include <sys/socket.h>
+
+#ifdef DMALLOC
+#include "dmalloc.h"
+#endif
 
 #define C_CHECK(MSG, what) if(what == -1){ perror(MSG);  return -1; }
 

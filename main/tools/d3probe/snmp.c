@@ -1,8 +1,7 @@
-#include "d3probe.h"
-
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
+#include "d3probe.h"
 
 typedef struct {
   // session cannot be closed inside callback so we

@@ -14,6 +14,14 @@ MRuby::Build.new do |conf|
   # include the default GEMs
   # conf.gembox 'default'
   
+  # options
+  with_dmalloc = true
+  with_gmalloc = false
+  
+  
+  
+  ## ------------
+  
   conf.gem core: "mruby-print"
   conf.gem core: "mruby-struct"
   conf.gem core: "mruby-numeric-ext"
@@ -47,6 +55,20 @@ MRuby::Build.new do |conf|
         "/usr/local/lib/libnet11"
       ]
    end
+   
+   
+   
+   
+    if with_dmalloc
+      conf.cc.defines << 'DMALLOC'
+      conf.cc.defines << 'DMALLOC_FUNC_CHECK'
+      conf.linker.libraries << 'dmallocth'
+    end
+   
+    if with_gmalloc
+      conf.linker.libraries << 'gmalloc'
+    end
+
   
   # C compiler settings
   # conf.cc do |cc|

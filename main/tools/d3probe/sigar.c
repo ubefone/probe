@@ -1,10 +1,10 @@
 
-#include "d3probe.h"
-
 #include <sigar.h>
 #include <sigar_format.h>
 
 #include <arpa/inet.h>
+
+#include "d3probe.h"
 
 // #define MAX_CPUS 8
 #define CHK(WHAT) if(WHAT == -1){ mrb_raise(mrb, E_RUNTIME_ERROR, "error: " #WHAT); return mrb_nil_value(); }

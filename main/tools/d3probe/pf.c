@@ -1,5 +1,3 @@
-#include "d3probe.h"
-
 #if __FreeBSD__ >= 8
 
 #include <fcntl.h>
@@ -8,6 +6,7 @@
 #include <net/if.h>
 #include <net/pfvar.h>
 
+#include "d3probe.h"
 
 static int dev = -1;
 
@@ -80,6 +79,8 @@ void setup_pf_api(mrb_state *mrb)
 }
 
 #else
+
+#include "d3probe.h"
 
 void setup_pf_api(mrb_state *mrb){
   

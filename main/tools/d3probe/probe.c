@@ -1,6 +1,5 @@
 
 #include "d3probe.h"
-#include <errno.h>
 
 // static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
 // {

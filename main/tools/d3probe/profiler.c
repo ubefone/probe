@@ -1,5 +1,4 @@
 #include "d3probe.h"
-#include <stdlib.h>
 
 uint8_t show_allocs = 0;
 

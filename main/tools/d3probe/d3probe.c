@@ -1,11 +1,11 @@
-
-#include "d3probe.h"
-
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/time.h>
 #include <signal.h>
+
+
+#include "d3probe.h"
 
 static const char *config_path;
 

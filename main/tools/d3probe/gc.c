@@ -21,8 +21,24 @@ static mrb_value get_store(mrb_state *mrb)
 void protect_register(mrb_state *mrb, mrb_value v)
 {
   mrb_value r_arr = get_store(mrb);
+  mrb_int i, size = mrb_ary_len(mrb, r_arr);
+  mrb_int idx = -1;
   
-  mrb_ary_push(mrb, r_arr, v);
+  // look for a free cell
+  for(i = 0; i< size; i++){
+    mrb_value val = mrb_ary_ref(mrb, r_arr, i);
+    if( mrb_nil_p(val) ){
+      idx = i;
+      break;
+    }
+  }
+  
+  if( idx > -1 ){
+    mrb_ary_set(mrb, r_arr, idx, mrb_nil_value());
+  }
+  else {
+    mrb_ary_push(mrb, r_arr, v);
+  }
 }
 
 

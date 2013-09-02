@@ -9,5 +9,6 @@ touch test/mrbtest.rake
 # rake clean
 rm -rf build/host
 rm -rf build/main
-rake --trace
+rm -rf bin/*
+rake
 cp bin/d3probe ..

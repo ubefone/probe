@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-// #include <string.h>
+#include <string.h>
 #include <errno.h>
 #include <math.h>
 
@@ -54,9 +54,17 @@ void protect_register(mrb_state *mrb, mrb_value v);
 void protect_unregister(mrb_state *mrb, mrb_value v);
 
 // profiler
-void *profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud);
-#ifdef MEMORY_PROFILE
-void dump_state(mrb_state *mrb);
+
+#ifdef _MEM_PROFILER
+  void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud, const char *file, uint32_t line);
+  void profiler_set_checkpoint();
+  void print_allocations();
+#else
+  void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud);
+#endif
+
+#ifdef _MEM_PROFILER_RUBY
+  void dump_state(mrb_state *mrb);
 #endif
 
 

@@ -15,30 +15,32 @@ MRuby::Build.new do |conf|
   # conf.gembox 'default'
   
   # options
-  with_dmalloc = true
+  with_dmalloc = false
   with_gmalloc = false
+
+  with_memory_profiler_c = false
+  with_memory_profiler_ruby = false
   
-  
-  
+  force_gc_at_cycle_end = true
+
+
+
   ## ------------
-  
+
   conf.gem core: "mruby-print"
   conf.gem core: "mruby-struct"
   conf.gem core: "mruby-numeric-ext"
-  # conf.gem core: "mruby-objectspace"
   # conf.gem core: "mruby-enum-ext"
   # conf.gem core: "mruby-string-ext"
-  
+
   conf.gem github: 'iij/mruby-io'
   conf.gem github: 'iij/mruby-socket'
   conf.gem github: 'mattn/mruby-json'
+  # conf.gem github: 'viking/mruby-zlib'
   # conf.gem '/Users/schmurfy/Dev/personal/mrbgems/mruby-ping'
   conf.gem github: 'schmurfy/mruby-ping'
-  
-  conf.gem 'main'
-  
+
   conf.cc do |cc|
-    # MEMORY_PROFILE
     cc.defines = %w(MRB_INT64  MRB_GC_STRESS)
     # cc.defines = %w(MRB_GC_STRESS)
     cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
@@ -47,28 +49,49 @@ MRuby::Build.new do |conf|
         "/usr/local/include",
         "/usr/local/include/libnet11"
       ]
-   end
+  end
    
-   conf.linker do |linker|
-    linker.library_paths = [
-        "/usr/local/lib",
-        "/usr/local/lib/libnet11"
-      ]
-   end
-   
-   
-   
-   
-    if with_dmalloc
-      conf.cc.defines << 'DMALLOC'
-      conf.cc.defines << 'DMALLOC_FUNC_CHECK'
-      conf.linker.libraries << 'dmallocth'
-    end
-   
-    if with_gmalloc
-      conf.linker.libraries << 'gmalloc'
-    end
+  conf.linker do |linker|
+  linker.library_paths = [
+      "/usr/local/lib",
+      "/usr/local/lib/libnet11"
+    ]
+  end
 
+  if with_memory_profiler_c
+    conf.cc.defines << '_MEM_PROFILER'
+  end
+
+  if with_memory_profiler_ruby
+    conf.cc.defines << '_MEM_PROFILER_RUBY'
+    conf.gem core: "mruby-objectspace"
+    # keep filenames and line numbers
+    conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
+    
+    force_gc_at_cycle_end = true
+  end
+  
+  
+  if force_gc_at_cycle_end
+    conf.cc.defines << 'FORCE_END_OF_CYCLE_GC'
+  end
+
+
+  if with_dmalloc
+    conf.cc.defines << 'DMALLOC'
+    conf.cc.defines << 'DMALLOC_FUNC_CHECK'
+    conf.linker.libraries << 'dmallocth.a'
+  end
+
+  if with_gmalloc
+    conf.linker.libraries << 'gmalloc'
+  end
+    
+  
+  
+  conf.gem 'main'
+  
+  
   
   # C compiler settings
   # conf.cc do |cc|

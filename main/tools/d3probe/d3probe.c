@@ -108,6 +108,7 @@ void clean_exit(int sig)
 
 int main(int argc, char const *argv[])
 {
+  uint8_t checkpoint_set = 0;
   fd_set rfds;
   char buffer[BUFFER_SIZE];
   int i, n;
@@ -262,7 +263,29 @@ int main(int argc, char const *argv[])
     // and now sleep until the next cycle
     gettimeofday(&cycle_completed_at, NULL);
     
-  #ifdef MEMORY_PROFILE
+  #ifdef _MEM_PROFILER
+    if( checkpoint_set ){
+      print_allocations();
+    }
+  #endif
+    
+    
+  #ifdef FORCE_END_OF_CYCLE_GC
+    mrb_full_gc(mrb);
+    // run gc for all the vms
+    for(i= 0; i< plugins_count; i++){
+      mrb_full_gc(plugins[i].mrb);
+    }
+  #endif
+  
+  #ifdef _MEM_PROFILER
+    checkpoint_set = 1;
+    // and set starting point
+    profiler_set_checkpoint();
+  #endif
+
+    
+  #ifdef _MEM_PROFILER_RUBY
     // dump VMS state
     dump_state(mrb);
     for(i= 0; i< plugins_count; i++){

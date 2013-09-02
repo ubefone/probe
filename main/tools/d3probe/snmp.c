@@ -59,8 +59,8 @@ static mrb_value _snmp_select(mrb_state *mrb, mrb_value self)
     
     // printf("block: %d, timeout[%d . %d]\n", block, timeout.tv_sec, timeout.tv_usec);
     // ignore returned timeout, we only needs the fds
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 200000;
     
     puts("++ SELECT");
     

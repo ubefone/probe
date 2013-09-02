@@ -9,8 +9,8 @@ config(:output) do |o|
   # in transmitted data
   o.hostname = "local"
   
-  # how frequently data will be sent (in seconds)
-  o.interval = 5
+  # how frequently data will be sent (in ms)
+  o.interval = 5000
 end
 
 

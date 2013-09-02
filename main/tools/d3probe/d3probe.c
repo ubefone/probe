@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
   r_output = mrb_gv_get(mrb, output_gv_sym);
   interval = mrb_fixnum(mrb_funcall(mrb, r_output, "interval", 0));
   
-  printf("Interval set to %ds\n", (int)interval);
+  printf("Interval set to %dms\n", (int)interval);
   
   printf("Sending initial report...\n");
   mrb_funcall(mrb, r_output, "send_report", 0);

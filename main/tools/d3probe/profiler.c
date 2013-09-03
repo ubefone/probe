@@ -24,13 +24,20 @@ static allocation_t *allocations_list = NULL;
 
 static allocation_t *checkpoint = NULL;
 
-#define PROJECT_BASENAME "/d3-probe/"
+static char pwd[MAXPATHLEN] = "";
 
-
+void init_profiler()
+{
+  if( getcwd(pwd, sizeof(pwd)) == NULL ){
+    perror("getcwd");
+  }
+  
+  printf("pwd: %s\n", pwd);
+}
 
 static allocation_t *create_allocation(mrb_state *mrb, const char *path, uint32_t line, void *address, size_t size)
 {
-  char *tmp = strstr(path, PROJECT_BASENAME);
+  char *tmp = strstr(path, pwd);
   allocation_t *alloc = malloc(sizeof(allocation_t));
   
   if( mrb ){
@@ -57,7 +64,7 @@ static allocation_t *create_allocation(mrb_state *mrb, const char *path, uint32_
       }
       
       if( file[0] !=  '\0' ){
-        char *fname = strstr(file, PROJECT_BASENAME);
+        char *fname = strstr(file, pwd);
         if( fname ) file = fname;
         snprintf(alloc->ruby_fname, sizeof(alloc->ruby_fname) - 1, "%s:%d", file, line);
       }
@@ -124,7 +131,7 @@ void print_allocations()
 
 
 void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud, const char *file, uint32_t line)
-{
+{ 
   if (size == 0) {
     allocation_t *prev = NULL;
     allocation_t *curr = allocations_list;
@@ -190,20 +197,20 @@ void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud)
 
 #ifdef _MEM_PROFILER_RUBY
 
-#include <execinfo.h>
+// #include <execinfo.h>
 
-void print_backtrace()
-{
-  void* callstack[20];
-  int i, frames = backtrace(callstack, 20);
-  char** strs = backtrace_symbols(callstack, frames);
+// void print_backtrace()
+// {
+//   void* callstack[20];
+//   int i, frames = backtrace(callstack, 20);
+//   char** strs = backtrace_symbols(callstack, frames);
   
-  for(i = 0; i < frames; ++i) {
-    // printf("%s\n", strs[i]);
-  }
+//   for(i = 0; i < frames; ++i) {
+//     // printf("%s\n", strs[i]);
+//   }
   
-  free(strs);
-}
+//   free(strs);
+// }
 
 void dump_state(mrb_state *mrb)
 {

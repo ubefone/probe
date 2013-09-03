@@ -19,6 +19,7 @@
 
 #include <pthread.h>
 #include <sys/socket.h>
+#include <sys/param.h>
 
 #ifdef DMALLOC
 #include "dmalloc.h"
@@ -54,6 +55,7 @@ void protect_register(mrb_state *mrb, mrb_value v);
 void protect_unregister(mrb_state *mrb, mrb_value v);
 
 // profiler
+void init_profiler();
 
 #ifdef _MEM_PROFILER
   void* profiler_allocf(mrb_state *mrb, void *p, size_t size, void *ud, const char *file, uint32_t line);

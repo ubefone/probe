@@ -114,9 +114,9 @@ int main(int argc, char const *argv[])
   int i, n;
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
-  mrb_state *mrb = mrb_open_allocf(profiler_allocf, "main");
+  mrb_state *mrb;
   mrb_value r_output;
-  mrb_sym output_gv_sym = mrb_intern2(mrb, "$output", 7);
+  mrb_sym output_gv_sym;
   mrb_int interval;
   
   if( argc != 2 ){
@@ -124,22 +124,27 @@ int main(int argc, char const *argv[])
     exit(1);
   }
   
+#ifdef _MEM_PROFILER
+  init_profiler();
+#endif
+  
   config_path = argv[1];
   
-  
   printf("Initializing core...\n");
+  mrb = mrb_open_allocf(profiler_allocf, "main");
+  output_gv_sym = mrb_intern2(mrb, "$output", 7);
   setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
   execute_file(mrb, config_path);
   
   printf("Loading plugins...\n");
-  // init_plugin_from_file(&plugins[plugins_count], "plugins/dummy.rb"); plugins_count++;
+  init_plugin_from_file(&plugins[plugins_count], "plugins/dummy.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
   init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
+  // init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
   
 #if __FreeBSD__ >= 8
-  init_plugin_from_file(&plugins[plugins_count], "plugins/pf.rb"); plugins_count++;
+  // init_plugin_from_file(&plugins[plugins_count], "plugins/pf.rb"); plugins_count++;
 #endif
   
   

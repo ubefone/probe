@@ -192,6 +192,7 @@ class TestPlugin < Plugin
         
         
         send_metrics(data)
+        GC.start()
         
       rescue => err
         if err.message != "recv"

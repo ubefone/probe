@@ -19,6 +19,7 @@ class Plugin
       else
         yield()
       end
+      GC.start()
     end
   end
 end

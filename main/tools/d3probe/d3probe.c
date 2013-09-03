@@ -269,14 +269,8 @@ int main(int argc, char const *argv[])
     }
   #endif
     
-    
-  #ifdef FORCE_END_OF_CYCLE_GC
+    // force a gc run at the end of each cycle
     mrb_full_gc(mrb);
-    // run gc for all the vms
-    for(i= 0; i< plugins_count; i++){
-      mrb_full_gc(plugins[i].mrb);
-    }
-  #endif
   
   #ifdef _MEM_PROFILER
     checkpoint_set = 1;

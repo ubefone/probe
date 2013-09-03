@@ -21,8 +21,6 @@ MRuby::Build.new do |conf|
   with_memory_profiler_c = true
   with_memory_profiler_ruby = true
   
-  force_gc_at_cycle_end = true
-  
   enable_64bits_mode = false
   gc_stress = true
   debug_mode = true
@@ -80,15 +78,8 @@ MRuby::Build.new do |conf|
     conf.gem core: "mruby-objectspace"
     # keep filenames and line numbers
     conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
-    
-    force_gc_at_cycle_end = true
   end
   
-  
-  if force_gc_at_cycle_end
-    conf.cc.defines << 'FORCE_END_OF_CYCLE_GC'
-  end
-
 
   if with_dmalloc
     conf.cc.defines << 'DMALLOC'

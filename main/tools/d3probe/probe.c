@@ -20,6 +20,20 @@ static mrb_value plugin_sleep(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+
+
+static mrb_value plugin_ms_sleep(mrb_state *mrb, mrb_value self)
+{
+  mrb_float delay;
+  
+  mrb_get_args(mrb, "f", &delay);
+  
+  usleep((int)(delay * 1000));
+  
+  return mrb_nil_value();
+}
+
+
 static mrb_value plugin_errno(mrb_state *mrb, mrb_value self)
 {
   mrb_value r_ret;
@@ -55,6 +69,7 @@ void setup_api(mrb_state *mrb)
   
   // Kernel
   mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, kernel, "ms_sleep", plugin_ms_sleep, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, kernel, "errno_str", plugin_errno, MRB_ARGS_REQ(0));
   
   // D3Probe

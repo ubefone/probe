@@ -140,7 +140,7 @@ class TestPlugin < Plugin
     
     @monitored_interfaces = []
     
-    @loop_delay = 0.2
+    @loop_delay = 200
   end
   
   def monitor_interfaces(*names)
@@ -155,7 +155,7 @@ class TestPlugin < Plugin
     pipe._setnonblock(true)
             
     loop do
-      sleep(@loop_delay)
+      ms_sleep(@loop_delay)
       
       @cpu.read()
       @mem.read()

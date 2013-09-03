@@ -18,10 +18,14 @@ MRuby::Build.new do |conf|
   with_dmalloc = false
   with_gmalloc = false
 
-  with_memory_profiler_c = false
-  with_memory_profiler_ruby = false
+  with_memory_profiler_c = true
+  with_memory_profiler_ruby = true
   
   force_gc_at_cycle_end = true
+  
+  enable_64bits_mode = false
+  gc_stress = true
+  debug_mode = true
 
 
 
@@ -41,9 +45,6 @@ MRuby::Build.new do |conf|
   conf.gem github: 'schmurfy/mruby-ping'
 
   conf.cc do |cc|
-    cc.defines = %w(MRB_INT64  MRB_GC_STRESS)
-    # cc.defines = %w(MRB_GC_STRESS)
-    cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
     cc.include_paths = [
         "#{root}/include",
         "/usr/local/include",
@@ -56,6 +57,18 @@ MRuby::Build.new do |conf|
       "/usr/local/lib",
       "/usr/local/lib/libnet11"
     ]
+  end
+  
+  if debug_mode
+    conf.cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
+  end
+  
+  if gc_stress
+    conf.cc.defines << "MRB_GC_STRESS"
+  end
+  
+  if enable_64bits_mode
+    conf.cc.defines << "MRB_INT64"
   end
 
   if with_memory_profiler_c

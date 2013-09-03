@@ -116,6 +116,8 @@ class Output
     toto = $output
     h = JSON::parse(json)
     @buffer << h
+  rescue ArgumentError => err
+    raise "Invalid json received: #{json}"
   end
   
   ##

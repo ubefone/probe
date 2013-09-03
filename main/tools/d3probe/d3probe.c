@@ -93,7 +93,7 @@ static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int inte
     usleep(expected - elapsed_useconds);
   }
   else {
-    printf("warning: loop execution exceeded interval !\n");
+    printf("warning: loop execution exceeded interval ! (%d ms)\n", elapsed_useconds / 1000);
   }
 }
 
@@ -216,6 +216,7 @@ int main(int argc, char const *argv[])
         for(i = 0; i< MAX_PLUGINS; i++){
           if( (fds[i] != NOPLUGIN_VALUE) && FD_ISSET(fds[i], &rfds) ){
             while (1){
+              struct timeval answered_at;
               n = read(fds[i], buffer, sizeof(buffer));
               if( n == -1 ){
                 if( errno != EAGAIN )
@@ -228,7 +229,11 @@ int main(int argc, char const *argv[])
                 continue;
               }
               
-              // printf("[fd:%d] data from plugin: %d bytes\n", fds[i], n);
+              gettimeofday(&answered_at, NULL);
+              printf("received answer from %s in %d ms\n", (const char *) plugins[i].mrb->ud,
+                  (answered_at.tv_sec - cycle_started_at.tv_sec) * 1000 +
+                  (answered_at.tv_usec - cycle_started_at.tv_usec) / 1000
+                );
               
               buffer[n] = 0x00;
               

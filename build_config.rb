@@ -14,15 +14,29 @@ MRuby::Build.new do |conf|
   # include the default GEMs
   # conf.gembox 'default'
   
+  def add_lib_folders(conf, *paths)
+    paths.each do |path|
+      conf.linker.library_paths << path if Dir.exists?(path)
+    end
+  end
+  
+  def add_include_folders(conf, *paths)
+    paths.each do |path|
+      conf.cc.include_paths << path if Dir.exists?(path)
+    end
+  end
+  
+  
+  
   # options
   with_dmalloc = false
   with_gmalloc = false
 
-  with_memory_profiler_c = true
-  with_memory_profiler_ruby = true
+  with_memory_profiler_c = false
+  with_memory_profiler_ruby = false
   
   enable_64bits_mode = false
-  gc_stress = true
+  gc_stress = false
   debug_mode = true
 
 
@@ -41,21 +55,25 @@ MRuby::Build.new do |conf|
   # conf.gem github: 'viking/mruby-zlib'
   # conf.gem '/Users/schmurfy/Dev/personal/mrbgems/mruby-ping'
   conf.gem github: 'schmurfy/mruby-ping'
-
-  conf.cc do |cc|
-    cc.include_paths = [
-        "#{root}/include",
-        "/usr/local/include",
-        "/usr/local/include/libnet11"
-      ]
-  end
-   
-  conf.linker do |linker|
-  linker.library_paths = [
-      "/usr/local/lib",
-      "/usr/local/lib/libnet11"
-    ]
-  end
+  
+  
+  add_include_folders(
+      "#{root}/include",
+      "../../deps/libnet/src/include",
+      "../../deps/sigar/src/include",
+      "../../deps/net-snmp/src/include",
+      # "/usr/local/include",
+      # "/usr/local/include/libnet11"
+    )
+  
+  add_lib_folders(
+      "../../deps/libnet/src/src/.libs",
+      "../../deps/sigar/src/src/.libs",
+      "../../deps/net-snmp/src/snmplib/.libs",
+      # "/usr/local/lib/libnet11",
+      # "/usr/local/lib"
+    )
+  
   
   if debug_mode
     conf.cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)

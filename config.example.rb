@@ -16,7 +16,7 @@ end
 
 # config for ping module
 plugin('ping') do |p|
-  # icmp ping
+  # icmp ping (times in ms)
   p.icmp_count = 10
   p.icmp_delay = 80
   p.icmp_timeout = 2000
@@ -41,8 +41,8 @@ plugin('sigar') do |p|
   # values are collectd in continue and averaged to be
   # then sent on each interval.
   # lower values yield higher precision but also higher
-  # cpu usage.
-  p.loop_delay = 0.3
+  # cpu usage (in ms).
+  p.loop_delay = 300
   
   # which network interfaces to gather stats for
   p.monitor_interfaces('eth0', 'tun1')

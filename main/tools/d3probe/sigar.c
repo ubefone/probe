@@ -2,6 +2,7 @@
 #include <sigar.h>
 #include <sigar_format.h>
 
+#include <netinet/in.h> // INET6_ADDRSTRLEN
 #include <arpa/inet.h>
 
 #include "d3probe.h"

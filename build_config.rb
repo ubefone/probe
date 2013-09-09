@@ -57,21 +57,23 @@ MRuby::Build.new do |conf|
   conf.gem github: 'schmurfy/mruby-ping'
   
   
-  add_include_folders(
+  add_include_folders(conf,
       "#{root}/include",
       "../../deps/libnet/src/include",
       "../../deps/sigar/src/include",
       "../../deps/net-snmp/src/include",
-      # "/usr/local/include",
-      # "/usr/local/include/libnet11"
+      "/tmp/sigar/include",
+      "/usr/local/include",
+      "/usr/local/include/libnet-1.1"
     )
   
-  add_lib_folders(
+  add_lib_folders(conf,
       "../../deps/libnet/src/src/.libs",
       "../../deps/sigar/src/src/.libs",
       "../../deps/net-snmp/src/snmplib/.libs",
+      "/tmp/sigar/src/.libs",
+      "/usr/local/lib"
       # "/usr/local/lib/libnet11",
-      # "/usr/local/lib"
     )
   
   

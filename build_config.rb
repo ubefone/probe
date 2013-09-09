@@ -49,12 +49,17 @@ MRuby::Build.new do |conf|
   # conf.gem core: "mruby-enum-ext"
   # conf.gem core: "mruby-string-ext"
 
-  conf.gem github: 'iij/mruby-io'
-  conf.gem github: 'iij/mruby-socket'
-  conf.gem github: 'mattn/mruby-json'
+  # conf.gem github: 'iij/mruby-io'
+  # conf.gem github: 'iij/mruby-socket'
+  # conf.gem github: 'mattn/mruby-json'
   # conf.gem github: 'viking/mruby-zlib'
   # conf.gem '/Users/schmurfy/Dev/personal/mrbgems/mruby-ping'
-  conf.gem github: 'schmurfy/mruby-ping'
+  # conf.gem github: 'schmurfy/mruby-ping'
+  
+  conf.gem "#{root}/../mrbgems/mruby-io"
+  conf.gem "#{root}/../mrbgems/mruby-socket"
+  conf.gem "#{root}/../mrbgems/mruby-json"
+  conf.gem "#{root}/../mrbgems/mruby-ping"
   
   
   add_include_folders(conf,

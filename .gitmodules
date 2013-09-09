@@ -1,3 +1,15 @@
 [submodule "mruby"]
 	path = mruby
 	url = git://github.com/mruby/mruby.git
+[submodule "mrbgems/mruby-ping"]
+	path = mrbgems/mruby-ping
+	url = https://github.com/schmurfy/mruby-ping.git
+[submodule "mrbgems/mruby-io"]
+	path = mrbgems/mruby-io
+	url = https://github.com/iij/mruby-io.git
+[submodule "mrbgems/mruby-json"]
+	path = mrbgems/mruby-json
+	url = https://github.com/mattn/mruby-json.git
+[submodule "mrbgems/mruby-socket"]
+	path = mrbgems/mruby-socket
+	url = https://github.com/iij/mruby-socket.git

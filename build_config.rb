@@ -1,3 +1,5 @@
+mydir = File.expand_path('../', __FILE__)
+
 MRuby::Build.new do |conf|
   # load specific toolchain settings
   toolchain :gcc
@@ -56,11 +58,12 @@ MRuby::Build.new do |conf|
   # conf.gem '/Users/schmurfy/Dev/personal/mrbgems/mruby-ping'
   # conf.gem github: 'schmurfy/mruby-ping'
   
-  conf.gem "#{root}/../mrbgems/mruby-io"
-  conf.gem "#{root}/../mrbgems/mruby-socket"
-  conf.gem "#{root}/../mrbgems/mruby-json"
-  conf.gem "#{root}/../mrbgems/mruby-ping"
+  conf.gem "#{mydir}/mrbgems/mruby-io"
+  conf.gem "#{mydir}/mrbgems/mruby-socket"
+  conf.gem "#{mydir}/mrbgems/mruby-json"
+  conf.gem "#{mydir}/mrbgems/mruby-ping"
   
+  conf.build_dir =  File.expand_path('../build', __FILE__)
   
   add_include_folders(conf,
       "#{root}/include",
@@ -118,7 +121,7 @@ MRuby::Build.new do |conf|
     
   
   
-  conf.gem 'main'
+  conf.gem "#{mydir}/main"
   
   
   

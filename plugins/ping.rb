@@ -6,7 +6,6 @@ class PingPlugin < Plugin
     # @arp = ARPPinger.new('en1')
     @icmp = ICMPPinger.new
     
-    @icmp_targets = []
     @arp_targets = []
     
     @icmp_timeout = 500
@@ -14,8 +13,9 @@ class PingPlugin < Plugin
     @icmp_delay = 10
   end
   
-  def add_icmp_target(*addr)
-    addr.each{|a| @icmp_targets << a }
+  def add_icmp_target(addr, opts = {})
+    # addr.each{|a| @icmp_targets << a }
+    @icmp.add_target(addr, opts)
   end
   
   def add_arp_target(*addr)
@@ -25,7 +25,6 @@ class PingPlugin < Plugin
     
   def cycle
     # @arp.set_targets(@arp_targets)
-    @icmp.set_targets(@icmp_targets)
     
     simple_loop do
       data = {}
@@ -41,14 +40,14 @@ class PingPlugin < Plugin
         
       # end
       
-      unless @icmp_targets.empty?
+      if @icmp.has_targets?
         percentiles = [0.05, 0.25, 0.5, 0.75, 0.95, 0.98]
         ret = @icmp.send_pings(@icmp_timeout, @icmp_count, @icmp_delay, percentiles)
         # p [:ret, ret]
         
         data['icmp_ping'] = {}
         
-        @icmp_targets.each do |host|
+        ret.each do |host, dd|
           data['icmp_ping'][host] = {
             'latency' => ret[host][0] / 1000,
             'loss' => ret[host][1]

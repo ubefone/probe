@@ -68,18 +68,18 @@ MRuby::Build.new do |conf|
   
   add_include_folders(conf,
       "#{root}/include",
-      "../../deps/libnet/src/include",
-      "../../deps/sigar/src/include",
-      "../../deps/net-snmp/src/include",
+      "../libnet/src/include",
+      "../sigar/src/include",
+      "../net-snmp/src/include",
       "/tmp/sigar/include",
       "/usr/local/include",
       "/usr/local/include/libnet-1.1"
     )
   
   add_lib_folders(conf,
-      "../../deps/libnet/src/src/.libs",
-      "../../deps/sigar/src/src/.libs",
-      "../../deps/net-snmp/src/snmplib/.libs",
+      "../libnet/src/src/.libs",
+      "../sigar/src/src/.libs",
+      "../net-snmp/src/snmplib/.libs",
       "/tmp/sigar/src/.libs",
       "/usr/local/lib"
       # "/usr/local/lib/libnet11",

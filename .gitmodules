@@ -10,3 +10,6 @@
 [submodule "mrbgems/mruby-socket"]
 	path = mrbgems/mruby-socket
 	url = https://github.com/iij/mruby-socket.git
+[submodule "mrbgems/mruby-zlib"]
+	path = mrbgems/mruby-zlib
+	url = https://github.com/viking/mruby-zlib.git

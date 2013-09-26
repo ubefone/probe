@@ -62,6 +62,7 @@ MRuby::Build.new do |conf|
   conf.gem "#{mydir}/mrbgems/mruby-socket"
   conf.gem "#{mydir}/mrbgems/mruby-json"
   conf.gem "#{mydir}/mrbgems/mruby-ping"
+  conf.gem "#{mydir}/mrbgems/mruby-zlib"
   
   conf.build_dir =  File.expand_path('../build', __FILE__)
   

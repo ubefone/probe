@@ -154,7 +154,7 @@ class Output
     # p msg
     json = JSON::stringify(msg)
     # p [:send_msg, json.bytesize]
-    @socket.send(json, 0, @host, @port)
+    @socket.send(Zlib.deflate(json), 0, @host, @port)
   end
   
   def send_report

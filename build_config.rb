@@ -1,4 +1,5 @@
 mydir = File.expand_path('../', __FILE__)
+overload_conf = File.expand_path('../../build_config_overload.rb', __FILE__)
 
 MRuby::Build.new do |conf|
   # load specific toolchain settings
@@ -68,21 +69,13 @@ MRuby::Build.new do |conf|
   
   add_include_folders(conf,
       "#{root}/include",
-      "../libnet/src/include",
-      "../sigar/src/include",
-      "../net-snmp/src/include",
       "/tmp/sigar/include",
       "/usr/local/include",
       "/usr/local/include/libnet-1.1"
     )
   
   add_lib_folders(conf,
-      "../libnet/src/src/.libs",
-      "../sigar/src/src/.libs",
-      "../net-snmp/src/snmplib/.libs",
-      "/tmp/sigar/src/.libs",
       "/usr/local/lib"
-      # "/usr/local/lib/libnet11",
     )
   
   
@@ -124,6 +117,11 @@ MRuby::Build.new do |conf|
   
   conf.gem "#{mydir}/main"
   
+  
+  if File.exist?(overload_conf)
+    require overload_conf
+    update_config(conf)
+  end
   
   
   # C compiler settings

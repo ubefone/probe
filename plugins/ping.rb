@@ -11,10 +11,14 @@ class PingPlugin < Plugin
     @icmp_timeout = 500
     @icmp_count = 10
     @icmp_delay = 10
+    @icmp_host_mapping = {}
   end
   
   def add_icmp_target(addr, opts = {})
-    # addr.each{|a| @icmp_targets << a }
+    if metric_name = opts[:metric_name]
+      @icmp_host_mapping[addr] = metric_name
+    end
+    
     @icmp.add_target(addr, opts)
   end
   
@@ -48,16 +52,17 @@ class PingPlugin < Plugin
         data['icmp_ping'] = {}
         
         ret.each do |host, dd|
-          data['icmp_ping'][host] = {
+          key = @icmp_host_mapping[host] || host
+          
+          data['icmp_ping'][key] = {
             'latency' => ret[host][0] / 1000,
             'loss' => ret[host][1]
           }
           
-          
           percentiles.each do |p|
             v = ret[host][2][p]
             if v
-              data['icmp_ping'][host]["p#{(p * 100).to_i}"] = v / 1000
+              data['icmp_ping'][key]["p#{(p * 100).to_i}"] = v / 1000
             end
           end
         end

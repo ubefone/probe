@@ -37,7 +37,15 @@ class PacketFilterPlugin < Plugin
   def cycle
     simple_loop do
       ret = {}
-      send_metrics('pf_labels' => @pf.stats)
+      
+      @pf.stats.each do |label, data|
+        ret[label] = {
+          'bytes_in' => data.bytes_in,
+          'bytes_out' => data.bytes_out
+        }
+      end
+      
+      send_metrics('pf_labels' => ret)
     end
   end
 end

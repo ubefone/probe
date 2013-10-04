@@ -50,7 +50,7 @@ MRuby::Build.new do |conf|
   conf.gem core: "mruby-struct"
   conf.gem core: "mruby-numeric-ext"
   # conf.gem core: "mruby-enum-ext"
-  # conf.gem core: "mruby-string-ext"
+  conf.gem core: "mruby-string-ext"
 
   # conf.gem github: 'iij/mruby-io'
   # conf.gem github: 'iij/mruby-socket'
@@ -64,6 +64,9 @@ MRuby::Build.new do |conf|
   conf.gem "#{mydir}/mrbgems/mruby-json"
   conf.gem "#{mydir}/mrbgems/mruby-ping"
   conf.gem "#{mydir}/mrbgems/mruby-zlib"
+  
+  conf.gem "#{mydir}/mrbgems/mruby-pack" # dependency of snmp
+  conf.gem "#{mydir}/mrbgems/msnmp"
   
   conf.build_dir =  File.expand_path('../build', __FILE__)
   

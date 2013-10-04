@@ -13,3 +13,9 @@
 [submodule "mrbgems/mruby-zlib"]
 	path = mrbgems/mruby-zlib
 	url = https://github.com/viking/mruby-zlib.git
+[submodule "mrbgems/msnmp"]
+	path = mrbgems/msnmp
+	url = https://github.com/schmurfy/msnmp.git
+[submodule "mrbgems/mruby-pack"]
+	path = mrbgems/mruby-pack
+	url = https://github.com/iij/mruby-pack.git

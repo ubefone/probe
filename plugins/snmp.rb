@@ -1,5 +1,5 @@
 class SnmpPlugin < Plugin
-  SnmpHost = Struct.new(:obj, :mibs)
+  SnmpHost = Struct.new(:obj, :mibs, :routing_table)
   
   def initialize
     @snmps = {}
@@ -9,11 +9,21 @@ class SnmpPlugin < Plugin
     SNMP.load_mibs(path)
   end
   
-  def query(host, mibs = {})
+  def query(host, opts = {})
+    raise "mibs required" unless opts.has_key?(:mibs)
+    
+    snmp = SNMP.new(host)
+    
     @snmps[host] = SnmpHost.new(
-        SNMP.new(host),
-        mibs
+        snmp,
+        opts.delete(:mibs),
+        opts.delete(:routing_table)
       )
+    
+    rt = opts.delete(:routing_table)
+    if rt.is_a?(Integer) && Socket::Constants.const_defined?(:SO_RTABLE)
+      snmp.sock.setsockopt(Socket::Constants::SOL_SOCKET, Socket::Constants::SO_RTABLE, rt)
+    end
   end
     
   def cycle
@@ -23,21 +33,11 @@ class SnmpPlugin < Plugin
       unless @snmps.empty?
         @snmps.each do |host, snmp|
           ret[host] = {}
-          snmp.obj.get(*snmp.mibs.keys) do |rr|
-            h = {}
-            rr.each do |k, v|
-              h[snmp.mibs[k]] = parse_value(v)
-            end
-            ret[host] = h
+          snmp.obj.get(snmp.mibs.keys) do |oid, tag, val|
+            ret[host][snmp.mibs[oid] || oid] = val
           end
         end
         
-        # wait for the responses
-        SNMP.select()
-        
-        @snmps.each do |_, snmp|
-          snmp.obj.cleanup()
-        end
       end
       
       send_metrics('snmp' => ret)

@@ -1,5 +1,5 @@
 class SnmpPlugin < Plugin
-  SnmpHost = Struct.new(:obj, :mibs, :routing_table)
+  SnmpHost = Struct.new(:obj, :mibs)
   
   def initialize
     @snmps = {}
@@ -16,13 +16,13 @@ class SnmpPlugin < Plugin
     
     @snmps[host] = SnmpHost.new(
         snmp,
-        opts.delete(:mibs),
-        opts.delete(:routing_table)
+        opts.delete(:mibs)
       )
     
     rt = opts.delete(:routing_table)
     if rt.is_a?(Integer) && Socket::Constants.const_defined?(:SO_RTABLE)
-      snmp.sock.setsockopt(Socket::Constants::SOL_SOCKET, Socket::Constants::SO_RTABLE, rt)
+      snmp.sock.setsockopt(Socket::Constants::SOL_SOCKET, Socket::Constants::SO_RTABLE, [rt].pack('L'))
+      snmp.sock.setsockopt(Socket::Constants::IPPROTO_IP, Socket::Constants::SO_RTABLE, [rt].pack('L'))
     end
   end
     

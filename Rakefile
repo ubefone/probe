@@ -3,7 +3,7 @@ task :default => :build
 task :build do
   config_path = File.expand_path('../build_config.rb', __FILE__)
   Dir.chdir( ENV['MRUBY_PATH'] ) do
-    sh "MRUBY_CONFIG=#{config_path} rake --trace"
+    sh "MRUBY_CONFIG=#{config_path} rake"
   end
 end
 

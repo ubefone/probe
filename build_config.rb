@@ -84,6 +84,8 @@ MRuby::Build.new do |conf|
   
   if debug_mode
     conf.cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
+    # keep filenames and line numbers
+    conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
   end
   
   if gc_stress
@@ -101,8 +103,6 @@ MRuby::Build.new do |conf|
   if with_memory_profiler_ruby
     conf.cc.defines << '_MEM_PROFILER_RUBY'
     conf.gem core: "mruby-objectspace"
-    # keep filenames and line numbers
-    conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
   end
   
 

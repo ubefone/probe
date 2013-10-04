@@ -5,14 +5,11 @@ class SnmpPlugin < Plugin
     @snmps = {}
   end
   
-  def load_mibs(path)
-    SNMP.load_mibs(path)
-  end
-  
   def query(host, opts = {})
     raise "mibs required" unless opts.has_key?(:mibs)
     
     snmp = SNMP.new(host)
+    snmp.timeout = 1
     
     @snmps[host] = SnmpHost.new(
         snmp,

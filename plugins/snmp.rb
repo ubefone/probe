@@ -1,5 +1,5 @@
 class SnmpPlugin < Plugin
-  SnmpHost = Struct.new(:obj, :mibs)
+  SnmpHost = Struct.new(:obj, :mibs, :metric_name)
   
   def initialize
     @snmps = {}
@@ -13,7 +13,8 @@ class SnmpPlugin < Plugin
     
     @snmps[host] = SnmpHost.new(
         snmp,
-        opts.delete(:mibs)
+        opts.delete(:mibs),
+        opts.delete(:metric_name) || host
       )
     
     rt = opts.delete(:routing_table)
@@ -29,9 +30,9 @@ class SnmpPlugin < Plugin
       
       unless @snmps.empty?
         @snmps.each do |host, snmp|
-          ret[host] = {}
+          ret[snmp.metric_name] = {}
           snmp.obj.get(snmp.mibs.keys) do |oid, tag, val|
-            ret[host][snmp.mibs[oid] || oid] = val
+            ret[snmp.metric_name][snmp.mibs[oid] || oid] = val
           end
         end
         

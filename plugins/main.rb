@@ -113,8 +113,7 @@ class Output
   end
   
   def add(json)
-    toto = $output
-    h = JSON::parse(json)
+    h = JSON::parse( Zlib.inflate(json) )
     @buffer << h
   rescue ArgumentError => err
     raise "Invalid json received: #{json}"

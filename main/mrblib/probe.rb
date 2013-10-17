@@ -1,7 +1,8 @@
 
 class Plugin
   def send_metrics(h)
-    pipe.write( JSON::stringify(h) )
+    str = Zlib.deflate( JSON::stringify(h) )
+    pipe.write( str )
   end
   
   def wait_command

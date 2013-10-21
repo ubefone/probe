@@ -15,8 +15,9 @@ class PingPlugin < Plugin
   end
   
   def add_icmp_target(addr, opts = {})
+    key = opts[:uid] || addr
     if metric_name = opts[:metric_name]
-      @icmp_host_mapping[addr] = metric_name
+      @icmp_host_mapping[key] = metric_name
     end
     
     @icmp.add_target(addr, opts)

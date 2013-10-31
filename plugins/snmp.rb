@@ -11,10 +11,12 @@ class SnmpPlugin < Plugin
     snmp = SNMP.new(host)
     snmp.timeout = 1
     
-    @snmps[host] = SnmpHost.new(
+    key = opts.delete(:metric_name) || host
+    
+    @snmps[key] = SnmpHost.new(
         snmp,
         opts.delete(:mibs),
-        opts.delete(:metric_name) || host
+        key
       )
     
     rt = opts.delete(:routing_table)
@@ -29,7 +31,7 @@ class SnmpPlugin < Plugin
       ret = {}
       
       unless @snmps.empty?
-        @snmps.each do |host, snmp|
+        @snmps.each do |_, snmp|
           ret[snmp.metric_name] = {}
           snmp.obj.get(snmp.mibs.keys) do |oid, tag, val|
             ret[snmp.metric_name][snmp.mibs[oid] || oid] = val

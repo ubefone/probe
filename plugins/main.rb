@@ -113,10 +113,11 @@ class Output
   end
   
   def add(json)
-    h = JSON::parse( Zlib.inflate(json) )
+    data = Zlib.inflate(json)
+    h = JSON::parse( data )
     @buffer << h
   rescue ArgumentError => err
-    raise "Invalid json received: #{json}"
+    raise "Invalid json received: #{data}"
   end
   
   ##

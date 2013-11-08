@@ -144,7 +144,7 @@ class TestPlugin < Plugin
   end
   
   def monitor_interfaces(*names)
-    @monitored_interfaces = names
+    @monitored_interfaces = names.size > 1 ? names : names[0]
   end
       
   def cycle

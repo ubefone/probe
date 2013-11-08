@@ -183,9 +183,18 @@ class TestPlugin < Plugin
         
         unless @monitored_interfaces.empty?
           data['interfaces'] = {}
-          @monitored_interfaces.each do |ifname|
-            stats = @sigar.if_stats(ifname)
-            data['interfaces'][ifname] = stats.to_h()
+          if @monitored_interfaces.is_a?(Hash)
+            @monitored_interfaces.each do |ifname, alias_name|
+              stats = @sigar.if_stats(ifname)
+              data['interfaces'][alias_name] = stats.to_h()
+            end
+
+          else
+            @monitored_interfaces.each do |ifname|
+              stats = @sigar.if_stats(ifname)
+              data['interfaces'][ifname] = stats.to_h()
+            end
+            
           end
           
         end

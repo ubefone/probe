@@ -48,6 +48,8 @@ if Object.const_defined?(:ObjectSpace)
   end
 end
 
+$plugins_to_load = []
+
 def register_plugin(name, obj)
   @plugin = obj
   @plugin_name = name
@@ -59,6 +61,8 @@ def config(name, &block)
   elsif name == @plugin_name
     puts "Plugin found, configuring..."
     block.call(@plugin)
+  else
+    $plugins_to_load << name
   end
 end
 

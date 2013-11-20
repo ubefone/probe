@@ -115,8 +115,8 @@ int main(int argc, char const *argv[])
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
   mrb_state *mrb;
-  mrb_value r_output;
-  mrb_sym output_gv_sym;
+  mrb_value r_output, r_plugins_list;
+  mrb_sym output_gv_sym, plugins_to_load_gv_sym;
   mrb_int interval;
   
   if( argc != 2 ){
@@ -133,20 +133,27 @@ int main(int argc, char const *argv[])
   printf("Initializing core...\n");
   mrb = mrb_open_allocf(profiler_allocf, "main");
   output_gv_sym = mrb_intern2(mrb, "$output", 7);
+  plugins_to_load_gv_sym = mrb_intern(mrb, "$plugins_to_load");
   setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
   execute_file(mrb, config_path);
   
   printf("Loading plugins...\n");
-  // init_plugin_from_file(&plugins[plugins_count], "plugins/dummy.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[plugins_count], "plugins/sigar.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[plugins_count], "plugins/ping.rb"); plugins_count++;
-  init_plugin_from_file(&plugins[plugins_count], "plugins/snmp.rb"); plugins_count++;
-  
-#if __FreeBSD__ >= 8
-  init_plugin_from_file(&plugins[plugins_count], "plugins/pf.rb"); plugins_count++;
-#endif
-  
+  r_plugins_list = mrb_gv_get(mrb, plugins_to_load_gv_sym);
+  for(i = 0; i< mrb_ary_len(mrb, r_plugins_list); i++){
+    char path[30];
+    mrb_value r_plugin_name = mrb_ary_ref(mrb, r_plugins_list, i);
+    const char *plugin_name = mrb_string_value_cstr(mrb, &r_plugin_name);
+    
+    snprintf(path, sizeof(path) - 1, "plugins/%s.rb", plugin_name);
+    
+    if( access(path, F_OK) == -1 ){
+      printf("cannot open plugin file \"%s\": %s\n", path, strerror(errno));
+      exit(1);
+    }
+    
+    init_plugin_from_file(&plugins[plugins_count], path); plugins_count++;
+  }  
   
   printf("Instanciating output class...\n");
   r_output = mrb_gv_get(mrb, output_gv_sym);

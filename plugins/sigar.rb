@@ -139,8 +139,13 @@ class TestPlugin < Plugin
     
     
     @monitored_interfaces = []
+    @monitored_processes = {}
     
     @loop_delay = 200
+  end
+  
+  def monitor_process(label, pid)
+    @monitored_processes[label] = pid
   end
   
   def monitor_interfaces(*names)
@@ -199,6 +204,23 @@ class TestPlugin < Plugin
           
         end
         
+        
+        unless @monitored_processes.empty?
+          data['processes'] = {}
+          @monitored_processes.each do |label, pid|
+            pid ||= getpid()
+            mem = @sigar.proc_mem(pid)
+            cpu_time = @sigar.proc_time(pid)
+            state = @sigar.proc_state(pid)
+            
+            data['processes'][label] = {
+              'memory_used' => mem.resident,
+              'cpu_user' => cpu_time.user,
+              'cpu_sys' => cpu_time.sys,
+              'cpu_total' => cpu_time.total
+            }
+          end
+        end
         
         send_metrics(data)
         GC.start()

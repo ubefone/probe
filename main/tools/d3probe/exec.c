@@ -54,6 +54,7 @@ int execute_file(mrb_state *mrb, const char *path)
   }
   
   c = mrbc_context_new(mrb);
+  mrbc_filename(mrb, c, path);
   v = mrb_load_file_cxt(mrb, script, c);
   mrbc_context_free(mrb, c);
   

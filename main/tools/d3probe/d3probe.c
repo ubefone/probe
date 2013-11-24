@@ -165,6 +165,12 @@ int main(int argc, char const *argv[])
   
   printf("Sending initial report...\n");
   mrb_funcall(mrb, r_output, "send_report", 0);
+  
+  if (mrb->exc) {
+    mrb_print_error(mrb);
+    
+    exit(1);
+  }
 
   
   // start all the threads

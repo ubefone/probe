@@ -2,7 +2,9 @@
 
 uint8_t show_allocs = 0;
 
+#ifdef _MEM_PROFILER
 static const char *none= "(none)";
+#endif
 
 #define PROFILER_PATH_SIZE 60
 

@@ -83,9 +83,9 @@ MRuby::Build.new do |conf|
   
   
   if debug_mode
-    conf.cc.flags = %w(-g -Wall -Werror-implicit-function-declaration)
+    conf.cc.flags = %w(-g -Wall)
     # keep filenames and line numbers
-    conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
+    # conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
   end
   
   if gc_stress

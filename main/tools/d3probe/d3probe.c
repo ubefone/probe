@@ -33,7 +33,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   int fds[2], flags;
   
   printf("Loading plugin %s...\n", path);
-  plugin->mrb = mrb_open_allocf(profiler_allocf, path);
+  plugin->mrb = mrb_open_allocf(profiler_allocf, (void *)path);
   setup_api(plugin->mrb);
   execute_file(plugin->mrb, path);
   execute_file(plugin->mrb, config_path);
@@ -93,7 +93,7 @@ static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int inte
     usleep(expected - elapsed_useconds);
   }
   else {
-    printf("warning: loop execution exceeded interval ! (%d ms)\n", elapsed_useconds / 1000);
+    printf("warning: loop execution exceeded interval ! (%u ms)\n", (uint32_t)(elapsed_useconds / 1000));
   }
 }
 
@@ -108,7 +108,9 @@ void clean_exit(int sig)
 
 int main(int argc, char const *argv[])
 {
+#ifdef _MEM_PROFILER
   uint8_t checkpoint_set = 0;
+#endif
   fd_set rfds;
   char buffer[BUFFER_SIZE];
   int i, n;
@@ -242,9 +244,9 @@ int main(int argc, char const *argv[])
               }
               
               gettimeofday(&answered_at, NULL);
-              printf("received answer from %s in %d ms\n", (const char *) plugins[i].mrb->ud,
-                  (answered_at.tv_sec - cycle_started_at.tv_sec) * 1000 +
-                  (answered_at.tv_usec - cycle_started_at.tv_usec) / 1000
+              printf("received answer from %s in %u ms\n", (const char *) plugins[i].mrb->ud,
+                  (uint32_t)((answered_at.tv_sec - cycle_started_at.tv_sec) * 1000 +
+                  (answered_at.tv_usec - cycle_started_at.tv_usec) / 1000)
                 );
               
               buffer[n] = 0x00;

@@ -3,7 +3,8 @@
 
 int execute_compiled_file(mrb_state *mrb, const char *path)
 {
-  int n;
+  // mrb_irep* irep;
+  // struct RProc *proc;
   FILE *script;
   
   script = fopen(path, "r");
@@ -13,19 +14,28 @@ int execute_compiled_file(mrb_state *mrb, const char *path)
     return -1;
   }
   
-  n = mrb_read_irep_file(mrb, script);
-  if (n < 0) {
-    fprintf(stderr, "failed to load mrb file.\n");
-    return -1;
-  }
+  // irep = mrb_read_irep(mrb, script);
+  // if (!irep) {
+  //   irep_error(mrb);
+  //   fprintf(stderr, "failed to load mrb file.\n");
+  //   return -1;
+  // }
   
-  mrb_run(mrb, mrb_proc_new(mrb, mrb->irep[n]), mrb_top_self(mrb));
-  if (mrb->exc) {
-    mrb_print_error(mrb);
-    return -1;
-  }
+  // proc = mrb_proc_new(mrb, irep);
+  // mrb_irep_decref(mrb, irep);
+  // val = mrb_context_run(mrb, proc, mrb_top_self(mrb), 0);
+
   
-  fclose(script);
+  // // mrb_run(mrb, mrb_proc_new(mrb, irep), mrb_top_self(mrb));
+  // if (mrb->exc) {
+  //   mrb_print_error(mrb);
+  //   return -1;
+  // }
+  
+  // fclose(script);
+  // return 0;
+  
+  mrb_load_irep_file(mrb, script);
   return 0;
 }
 

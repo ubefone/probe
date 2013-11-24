@@ -224,7 +224,7 @@ int main(int argc, char const *argv[])
       
       // printf("left: %d %d\n", left, left <= 0);
       
-      if( 0 == left )
+      if( !running || (0 == left) )
         break;
       
       fill_timeout(&tv, 500000);

@@ -144,6 +144,31 @@ class TestPlugin < Plugin
     @loop_delay = 200
   end
   
+  def monitor_daemontools(base_path)
+    raise "base_path is not a folder !" unless Dir.exist?(base_path)
+    
+    Dir.foreach(base_path) do |path|
+      if (path != '.') && (path != '..')
+        status_path = File.join(base_path, path, 'supervise/status')
+        if File.exists?(status_path)
+          monitor_process(path, status_path)
+        end
+      end
+    end
+    
+  end
+  
+  def find_pid(path)
+    pid = nil
+    
+    if File.exists?(path)
+      status = File.open(path){|f| f.read(50) }
+      pid, _ = status[12..-1].unpack('LC*')
+    end
+    
+    pid
+  end
+  
   def monitor_process(label, pid)
     @monitored_processes[label] = pid
   end
@@ -208,7 +233,11 @@ class TestPlugin < Plugin
         unless @monitored_processes.empty?
           data['processes'] = {}
           @monitored_processes.each do |label, pid|
-            pid ||= getpid()
+            
+            if pid.is_a?(String)
+              pid = find_pid(pid)
+            end
+            
             mem = @sigar.proc_mem(pid)
             cpu_time = @sigar.proc_time(pid)
             state = @sigar.proc_state(pid)

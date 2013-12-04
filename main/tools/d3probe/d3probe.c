@@ -55,7 +55,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   // set ivs
   // struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
   // mrb_value probe_klass = mrb_obj_value(rprobe);
-  mrb_sym plugin_iv_sym = mrb_intern2(plugin->mrb, "@plugin", 7);
+  mrb_sym plugin_iv_sym = mrb_intern(plugin->mrb, "@plugin", 7);
   
   plugin->plugin_obj = mrb_iv_get(plugin->mrb, mrb_obj_value(plugin->mrb->top_self), plugin_iv_sym);
   pp(plugin->mrb, plugin->plugin_obj, 0);
@@ -134,8 +134,8 @@ int main(int argc, char const *argv[])
   
   printf("Initializing core...\n");
   mrb = mrb_open_allocf(profiler_allocf, "main");
-  output_gv_sym = mrb_intern2(mrb, "$output", 7);
-  plugins_to_load_gv_sym = mrb_intern(mrb, "$plugins_to_load");
+  output_gv_sym = mrb_intern(mrb, "$output", 7);
+  plugins_to_load_gv_sym = mrb_intern(mrb, "$plugins_to_load", 16);
   setup_api(mrb);
   execute_file(mrb, "plugins/main.rb");
   execute_file(mrb, config_path);

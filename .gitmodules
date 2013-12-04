@@ -9,7 +9,7 @@
 	url = https://github.com/mattn/mruby-json.git
 [submodule "mrbgems/mruby-socket"]
 	path = mrbgems/mruby-socket
-	url = https://github.com/iij/mruby-socket.git
+	url = https://github.com/schmurfy/mruby-socket.git
 [submodule "mrbgems/mruby-zlib"]
 	path = mrbgems/mruby-zlib
 	url = https://github.com/viking/mruby-zlib.git
@@ -19,3 +19,6 @@
 [submodule "mrbgems/mruby-pack"]
 	path = mrbgems/mruby-pack
 	url = https://github.com/iij/mruby-pack.git
+[submodule "mrbgems/mruby-dir"]
+	path = mrbgems/mruby-dir
+	url = https://github.com/iij/mruby-dir.git

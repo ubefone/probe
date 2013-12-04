@@ -60,6 +60,7 @@ MRuby::Build.new do |conf|
   # conf.gem github: 'schmurfy/mruby-ping'
   
   conf.gem "#{mydir}/mrbgems/mruby-io"
+  conf.gem "#{mydir}/mrbgems/mruby-dir"
   conf.gem "#{mydir}/mrbgems/mruby-socket"
   conf.gem "#{mydir}/mrbgems/mruby-json"
   conf.gem "#{mydir}/mrbgems/mruby-ping"

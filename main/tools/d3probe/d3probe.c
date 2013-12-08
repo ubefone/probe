@@ -58,7 +58,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   mrb_sym plugin_iv_sym = mrb_intern(plugin->mrb, "@plugin", 7);
   
   plugin->plugin_obj = mrb_iv_get(plugin->mrb, mrb_obj_value(plugin->mrb->top_self), plugin_iv_sym);
-  pp(plugin->mrb, plugin->plugin_obj, 0);
+  // pp(plugin->mrb, plugin->plugin_obj, 0);
   
   // associates the c structure with the ruby objetc
   DATA_PTR(plugin->plugin_obj)  = (void*)plugin;
@@ -188,7 +188,7 @@ int main(int argc, char const *argv[])
     }
     
     init_plugin_from_file(&plugins[plugins_count], path); plugins_count++;
-  }  
+  }
   
   printf("Instanciating output class...\n");
   r_output = mrb_gv_get(mrb, output_gv_sym);

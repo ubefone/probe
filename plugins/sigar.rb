@@ -96,8 +96,16 @@ class TestPlugin < Plugin
   
   def initialize
     super
-    @sigar = Sigar.new
     
+    @sigar = Sigar.new
+    @monitored_interfaces = []
+    @monitored_processes = {}
+    
+    @loop_delay = 200
+
+  end
+  
+  def debug_report
     p [:cpus]
     @sigar.cpus_info_get().map{|s| s.to_h }.each do |h|
       p h
@@ -136,12 +144,6 @@ class TestPlugin < Plugin
     
     p [:network_infos]
     p @sigar.network_infos().to_h()
-    
-    
-    @monitored_interfaces = []
-    @monitored_processes = {}
-    
-    @loop_delay = 200
   end
   
   def monitor_daemontools(base_path)

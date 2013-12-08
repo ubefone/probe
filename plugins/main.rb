@@ -158,10 +158,10 @@ class Output
   end
   
   def send_report
-    report = HardwareReport.new
-    ret = report.build_report()
-    p [:report, ret]
-    send_msg(ret)
+    # report = HardwareReport.new
+    # ret = report.build_report()
+    # p [:report, ret]
+    # send_msg(ret)
   end
   
 end

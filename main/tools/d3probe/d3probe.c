@@ -351,14 +351,30 @@ int main(int argc, char const *argv[])
     sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }
   
-  printf("Canceling all threads...\n");
+  printf("Sending exit signal to all plugins...\n");
   strcpy(buffer, "exit");
   for(i= 0; i< plugins_count; i++){
     C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
   }
   
+  printf("Giving some time (%02d ms) for threads to exit...\n\n", (int)(1.5 * interval));
+  usleep(1.5 * interval);
+  
+  
   for(i= 0; i< plugins_count; i++){
-    printf("  - joining thread %d\n", i);
+    int ret = pthread_kill(plugins[i].thread, 0);
+    
+    // if a success is returned then the thread is still alive
+    // which means the thread did not acknoledged the exit message
+    // kill it.
+    if( ret == 0 ){
+      printf("    - plugin \"%s\" failed to exit properly, killing it...\n", (const char *) plugins[i].mrb->ud);
+      pthread_cancel(plugins[i].thread);
+    }
+    else {
+      printf("    - plugin \"%s\" exited properly.\n", (const char *) plugins[i].mrb->ud);
+    }
+    
     if( pthread_join(plugins[i].thread, NULL) < 0){
       fprintf(stderr, "join failed\n");
     }

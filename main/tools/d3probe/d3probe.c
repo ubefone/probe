@@ -66,15 +66,48 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   return 0;
 }
 
-static void fill_timeout(struct timeval *tv, uint64_t duration)
+int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
 {
+  /* Perform the carry for the later subtraction by updating y. */
+  if (x->tv_usec < y->tv_usec) {
+    int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+    y->tv_usec -= 1000000 * nsec;
+    y->tv_sec += nsec;
+  }
+  if (x->tv_usec - y->tv_usec > 1000000) {
+    int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+    y->tv_usec += 1000000 * nsec;
+    y->tv_sec -= nsec;
+  }
+
+  /* Compute the time remaining to wait.
+     tv_usec is certainly positive. */
+  result->tv_sec = x->tv_sec - y->tv_sec;
+  result->tv_usec = x->tv_usec - y->tv_usec;
+
+  /* Return 1 if result is negative. */
+  return x->tv_sec < y->tv_sec;
+}
+
+static void fill_timeout(struct timeval *tv, struct timeval started_at, uint64_t duration)
+{
+  struct timeval tmp1, tmp2;
+  
   tv->tv_sec = 0;
-  while( duration >= 1000000 ){
-    duration -= 1000000;
+  while( duration >= 1000 ){
+    duration -= 1000;
     tv->tv_sec += 1;
   }
   
-  tv->tv_usec = duration;
+  tv->tv_usec = duration * 1000;
+  
+  // substract the time we alreay waited
+  gettimeofday(&tmp1, NULL);
+  // first: <current time> - <cycle start time>
+  timeval_subtract(&tmp2, &tmp1, &started_at);
+  // then: <interval time> - (<current time> - <cycle start time>)
+  timeval_subtract(&tmp1, tv, &tmp2);
+  memcpy(tv, &tmp1, sizeof(tmp1));
 }
 
 #define BUFFER_SIZE 2048
@@ -227,7 +260,8 @@ int main(int argc, char const *argv[])
       if( !running || (0 == left) )
         break;
       
-      fill_timeout(&tv, 500000);
+      // substract 20ms to stay below the loop delay
+      fill_timeout(&tv, cycle_started_at, interval - 20);
       // printf("before select\n");
       n = select(maxfd + 1, &rfds, NULL, NULL, &tv);
       // printf("after select: %d\n", n);
@@ -275,6 +309,8 @@ int main(int argc, char const *argv[])
         }
       }
       else if( n == 0 )  {
+        printf("no responses received from %d plugins.\n", left);
+        break;
         // timeout
       }
       else {

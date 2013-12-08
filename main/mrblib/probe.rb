@@ -59,8 +59,9 @@ def config(name, &block)
   if name == :output
     block.call($output) if $output
   elsif name == @plugin_name
-    puts "Plugin found, configuring..."
-    block.call(@plugin)
+    puts "[Plugin #{name}] Configuring..."
+    block.call(@plugin) if block
+    puts "[Plugin #{name}] Configuration done."
   else
     $plugins_to_load << name
   end

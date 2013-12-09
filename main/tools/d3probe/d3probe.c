@@ -357,8 +357,8 @@ int main(int argc, char const *argv[])
     C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
   }
   
-  printf("Giving some time (%02d ms) for threads to exit...\n\n", (int)(1.5 * interval));
-  usleep(1.5 * interval);
+  printf("Giving some time (%02d ms) for threads to exit...\n\n", (int)(1.2 * interval));
+  usleep(1.2 * interval * 1000);
   
   
   for(i= 0; i< plugins_count; i++){

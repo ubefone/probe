@@ -371,6 +371,7 @@ int main(int argc, char const *argv[])
     }
   #endif
     
+    fflush(stdout);
     sleep_delay(&cycle_started_at, &cycle_completed_at, interval);
   }
   

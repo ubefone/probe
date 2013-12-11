@@ -130,6 +130,29 @@ static void sleep_delay(struct timeval *start, struct timeval *end, mrb_int inte
   }
 }
 
+static void really_sleep(uint32_t duration_ms){
+  int rc;
+  struct timespec rem, req;
+  
+  req.tv_sec = 0;
+  while( duration_ms >= 1000 ){
+    duration_ms -= 1000;
+    req.tv_sec += 1;
+  }
+  
+  req.tv_nsec = duration_ms * 1000000;
+  
+  // pause until time elapsed (restart if necessary)
+  // req=duration_ms;
+  do {
+    rc= nanosleep(&req,&rem);
+    req=rem;
+  }
+  while (rc==-1 && errno==EINTR);
+  // here, rc should be 0
+  // if not, parameters to nanosleep() were invalid (check errno)
+
+}
 
 static uint8_t running = 1;
 
@@ -357,8 +380,8 @@ int main(int argc, char const *argv[])
     C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
   }
   
-  printf("Giving some time (%02d ms) for threads to exit...\n\n", (int)(1.2 * interval));
-  usleep(1.2 * interval * 1000);
+  printf("Giving some time for threads to exit...\n\n");
+  really_sleep(2000);
   
   
   for(i= 0; i< plugins_count; i++){

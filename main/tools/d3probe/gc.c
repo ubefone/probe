@@ -3,11 +3,10 @@
 
 
 #define PROTECT_GV_NAME "$_safe_store"
-#define PROTECT_GV_NAME_LEN 12
 
 static mrb_value get_store(mrb_state *mrb)
 {
-  mrb_sym gv_name = mrb_intern_cstr(mrb, PROTECT_GV_NAME, PROTECT_GV_NAME_LEN);
+  mrb_sym gv_name = mrb_intern_cstr(mrb, PROTECT_GV_NAME);
   mrb_value r_arr = mrb_gv_get(mrb, gv_name);
   
   if( mrb_nil_p(r_arr) ){

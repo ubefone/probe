@@ -178,6 +178,7 @@ int main(int argc, char const *argv[])
   mrb_int interval;
   
   if( argc != 2 ){
+    printf("Version: %s\n", PROBE_VERSION);
     printf("Usage: %s <config_path>\n", argv[0]);
     exit(1);
   }

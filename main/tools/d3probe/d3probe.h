@@ -25,6 +25,8 @@
 #include "dmalloc.h"
 #endif
 
+#define PROBE_VERSION "1.0"
+
 #define C_CHECK(MSG, what) if(what == -1){ perror(MSG);  return -1; }
 
 

@@ -200,11 +200,18 @@ int main(int argc, char const *argv[])
   printf("Loading plugins...\n");
   r_plugins_list = mrb_gv_get(mrb, plugins_to_load_gv_sym);
   for(i = 0; i< mrb_ary_len(mrb, r_plugins_list); i++){
-    char path[30];
+    char *path, tmp[100];
+    int ssize;
+    
     mrb_value r_plugin_name = mrb_ary_ref(mrb, r_plugins_list, i);
     const char *plugin_name = mrb_string_value_cstr(mrb, &r_plugin_name);
     
-    snprintf(path, sizeof(path) - 1, "plugins/%s.rb", plugin_name);
+    snprintf(tmp, sizeof(tmp) - 1, "plugins/%s.rb", plugin_name);
+    ssize = strlen(tmp);
+    
+    path = malloc(ssize + 1);
+    strncpy(path, tmp, ssize);
+    path[ssize] = '\0';
     
     if( access(path, F_OK) == -1 ){
       printf("cannot open plugin file \"%s\": %s\n", path, strerror(errno));

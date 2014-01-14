@@ -155,6 +155,8 @@ class Output
     json = JSON::stringify(msg)
     # p [:send_msg, json.bytesize]
     @socket.send(Zlib.deflate(json), 0, @host, @port)
+  rescue
+    # if @socket.send fail, just ignores it
   end
   
   def send_report

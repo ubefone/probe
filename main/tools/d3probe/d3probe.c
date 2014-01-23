@@ -60,7 +60,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   plugin->plugin_obj = mrb_iv_get(plugin->mrb, mrb_obj_value(plugin->mrb->top_self), plugin_iv_sym);
   // pp(plugin->mrb, plugin->plugin_obj, 0);
   
-  // associates the c structure with the ruby objetc
+  // associates the c structure with the ruby object
   DATA_PTR(plugin->plugin_obj)  = (void*)plugin;
   
   return 0;

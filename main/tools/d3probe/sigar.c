@@ -339,6 +339,16 @@ static mrb_value _sigar_loadavg(mrb_state *mrb, mrb_value self)
     );
 }
 
+static mrb_value _sigar_verify_pid(mrb_state *mrb, mrb_value self)
+{
+  mrb_int pid;
+  
+  mrb_get_args(mrb, "i", &pid);
+  int ret = sigar_proc_kill(pid, 0);
+  
+  return (ret == SIGAR_OK) ? mrb_true_value() : mrb_false_value();
+}
+
 // TODO: find units on linux
 static mrb_value _sigar_proc_mem(mrb_state *mrb, mrb_value self)
 {
@@ -382,6 +392,27 @@ static mrb_value _sigar_proc_time(mrb_state *mrb, mrb_value self)
       mrb_fixnum_value(times.total)
     );
 }
+
+static mrb_value _sigar_proc_cpu(mrb_state *mrb, mrb_value self)
+{
+  mrb_int pid;
+  sigar_state_t *state = DATA_PTR(self);
+  sigar_proc_cpu_t cpu;
+  
+  struct RClass *c = mrb_class_get(mrb, "ProcCpuStruct");
+  
+  mrb_get_args(mrb, "i", &pid);
+  
+  CHK( sigar_proc_cpu_get(state->sigar, pid, &cpu) );
+  return mrb_funcall(mrb, mrb_obj_value(c), "new", 5,
+      mrb_fixnum_value(cpu.start_time / 1000), // ms => s
+      mrb_fixnum_value(cpu.user),
+      mrb_fixnum_value(cpu.sys),
+      mrb_fixnum_value(cpu.total),
+      mrb_float_value(mrb, cpu.percent)
+    );
+}
+
 
 static mrb_value _sigar_proc_state(mrb_state *mrb, mrb_value self)
 {
@@ -517,8 +548,10 @@ void setup_sigar_api(mrb_state *mrb)
   
   mrb_define_method(mrb, c, "if_stats", _sigar_if_stats,  ARGS_REQ(1));
   
+  mrb_define_method(mrb, c, "pid_valid?", _sigar_verify_pid,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "proc_mem", _sigar_proc_mem,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "proc_time", _sigar_proc_time,  ARGS_REQ(1));
+  mrb_define_method(mrb, c, "proc_cpu",   _sigar_proc_cpu,  ARGS_REQ(1));
   mrb_define_method(mrb, c, "proc_state", _sigar_proc_state,  ARGS_REQ(1));
   
   

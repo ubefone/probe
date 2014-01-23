@@ -41,6 +41,14 @@ ProcTimeStruct = Struct.new(
     :total
   )
 
+ProcCpuStruct = Struct.new(
+    :start_time,
+    :user,
+    :sys,
+    :total,
+    :percent
+  )
+
 ProcStateStruct = Struct.new(
     :name,
     :state,

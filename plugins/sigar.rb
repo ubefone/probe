@@ -240,16 +240,16 @@ class TestPlugin < Plugin
               pid = find_pid(pid)
             end
             
-            mem = @sigar.proc_mem(pid)
-            cpu_time = @sigar.proc_time(pid)
-            state = @sigar.proc_state(pid)
-            
-            data['processes'][label] = {
-              'memory_used' => mem.resident,
-              'cpu_user' => cpu_time.user,
-              'cpu_sys' => cpu_time.sys,
-              'cpu_total' => cpu_time.total
-            }
+            if @sigar.pid_valid?(pid)
+              mem = @sigar.proc_mem(pid)
+              cpu = @sigar.proc_cpu(pid)
+              state = @sigar.proc_state(pid)
+              
+              data['processes'][label] = {
+                'memory'  => mem.resident,
+                'cpu'     => cpu.percent
+              }
+            end
           end
         end
         

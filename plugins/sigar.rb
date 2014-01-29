@@ -247,7 +247,7 @@ class TestPlugin < Plugin
               
               data['processes'][label] = {
                 'memory'  => mem.resident,
-                'cpu'     => cpu.percent
+                'cpu'     => cpu.percent * 100
               }
             end
           end

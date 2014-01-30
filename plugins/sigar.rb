@@ -245,10 +245,8 @@ class TestPlugin < Plugin
               cpu = @sigar.proc_cpu(pid)
               state = @sigar.proc_state(pid)
               
-              mem = 0 if mem < 0
-              
               data['processes'][label] = {
-                'memory'  => mem.resident,
+                'memory'  => mem.resident > 0 ? mem.resident : 0,
                 'cpu'     => cpu.percent * 100
               }
             end

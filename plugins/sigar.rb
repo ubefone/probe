@@ -100,6 +100,7 @@ class TestPlugin < Plugin
     @sigar = Sigar.new
     @monitored_interfaces = []
     @monitored_processes = {}
+    @monitoring_mountpoints = {}
     
     @loop_delay = 200
 
@@ -178,6 +179,12 @@ class TestPlugin < Plugin
   def monitor_interfaces(*names)
     @monitored_interfaces = names.size > 1 ? names : names[0]
   end
+  
+  def monitor_disk_usage(mountpoints)
+    mountpoints.each do |label, path|
+      @monitoring_mountpoints[label] = path
+    end
+  end
       
   def cycle
     @cpu = AveragedCPUStat.new(@sigar)
@@ -250,6 +257,17 @@ class TestPlugin < Plugin
                 'cpu'     => cpu.percent * 100
               }
             end
+          end
+        end
+        
+        unless @monitoring_mountpoints.empty?
+          data['mountpoints'] = {}
+          @monitoring_mountpoints.each do |label, path|
+            stats = @sigar.fs_usage(path)
+            data['mountpoints'][label] = {
+              'free'          => stats.available,
+              'used_percent'  => stats.use_percent * 100
+            }
           end
         end
         

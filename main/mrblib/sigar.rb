@@ -83,9 +83,10 @@ DiskUsageStruct = Struct.new(
     :queue
   )
 
+# unit: KB
 FSUsageStruct = Struct.new(
     :disk,
-    :use_percent,
+    :use_percent, # 0.10 => 10%
     :total,
     :free,
     :used,

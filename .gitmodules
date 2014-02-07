@@ -3,7 +3,7 @@
 	url = https://github.com/schmurfy/mruby-ping.git
 [submodule "mrbgems/mruby-io"]
 	path = mrbgems/mruby-io
-	url = https://github.com/iij/mruby-io.git
+	url = https://github.com/schmurfy/mruby-io.git
 [submodule "mrbgems/mruby-json"]
 	path = mrbgems/mruby-json
 	url = https://github.com/mattn/mruby-json.git

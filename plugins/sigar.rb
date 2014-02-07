@@ -165,7 +165,7 @@ class TestPlugin < Plugin
     pid = nil
     
     if File.exists?(path)
-      status = File.open(path){|f| f.read(50) }
+      status = File.read(path)
       pid, _ = status[12..-1].unpack('LC*')
     end
     

@@ -266,7 +266,9 @@ class TestPlugin < Plugin
             stats = @sigar.fs_usage(path)
             data['mountpoints'][label] = {
               'free'          => stats.available,
-              'used_percent'  => stats.use_percent * 100
+              'used_percent'  => stats.use_percent * 100,
+              'reads'         => stats.disk.reads,
+              'writes'        => stats.disk.writes
             }
           end
         end

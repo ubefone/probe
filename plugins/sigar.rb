@@ -217,6 +217,9 @@ class TestPlugin < Plugin
             'min15' => loadavg.min15
           }
         
+        data['uptime'] = {
+          'uptime'  => @sigar.uptime()
+        }
         
         data = {'system' => data}
         

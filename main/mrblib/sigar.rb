@@ -73,7 +73,7 @@ DiskUsageStruct = Struct.new(
     :reads,
     :writes,
     :writes_KB,
-    :read_KB,
+    :reads_KB,
     :rtime,
     :wtime,
     :qtime,

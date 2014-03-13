@@ -1,4 +1,4 @@
-#if __FreeBSD__ >= 8
+#if __FreeBSD__ >= 8 || defined(__OpenBSD__)
 
 #include <fcntl.h>
 #include <sys/ioctl.h>

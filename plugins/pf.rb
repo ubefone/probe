@@ -35,6 +35,10 @@ class PacketFilterPlugin < Plugin
   end
   
   def cycle
+    unless @pf.respond_to?(:_stats)
+      raise "PF Plugin not supported on this platform"
+    end
+
     simple_loop do
       ret = {}
       

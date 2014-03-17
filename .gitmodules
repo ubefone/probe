@@ -3,16 +3,16 @@
 	url = https://github.com/schmurfy/mruby-ping.git
 [submodule "mrbgems/mruby-io"]
 	path = mrbgems/mruby-io
-	url = https://github.com/schmurfy/mruby-io.git
+	url = https://github.com/iij/mruby-io.git
 [submodule "mrbgems/mruby-json"]
 	path = mrbgems/mruby-json
 	url = https://github.com/mattn/mruby-json.git
 [submodule "mrbgems/mruby-socket"]
 	path = mrbgems/mruby-socket
-	url = https://github.com/schmurfy/mruby-socket.git
+	url = https://github.com/iij/mruby-socket.git
 [submodule "mrbgems/mruby-zlib"]
 	path = mrbgems/mruby-zlib
-	url = https://github.com/viking/mruby-zlib.git
+	url = https://github.com/schmurfy/mruby-zlib.git
 [submodule "mrbgems/msnmp"]
 	path = mrbgems/msnmp
 	url = https://github.com/schmurfy/msnmp.git

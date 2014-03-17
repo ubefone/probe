@@ -524,7 +524,7 @@ static mrb_value _sigar_uptime(mrb_state *mrb, mrb_value self)
 
 void setup_sigar_api(mrb_state *mrb)
 {
-  struct RClass *c = mrb_define_class(mrb, "Sigar", NULL);
+  struct RClass *c = mrb_define_class(mrb, "Sigar", mrb->object_class);
   
   mrb_define_method(mrb, c, "initialize", _sigar_init,  ARGS_REQ(0));
   

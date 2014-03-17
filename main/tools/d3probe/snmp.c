@@ -262,7 +262,7 @@
 
 void setup_snmp_api(mrb_state *mrb)
 {
-//   struct RClass *c = mrb_define_class(mrb, "SNMP", NULL);
+//   struct RClass *c = mrb_define_class(mrb, "SNMP", mrb->object_class);
   
 //   init_snmp("Probe");
 //   // read_mib("/usr/local/share/snmp/mibs/SNMPv2-MIB.txt");

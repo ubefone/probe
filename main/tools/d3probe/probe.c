@@ -65,7 +65,7 @@ static mrb_value plugin_getpid(mrb_state *mrb, mrb_value self)
 
 void setup_api(mrb_state *mrb)
 {
-  // class = mrb_define_class(mrb, "D3Probe", NULL);
+  // class = mrb_define_class(mrb, "D3Probe", mrb->object_class);
   // struct RClass *class = mrb_class_get(mrb, "D3Probe");
   struct RClass *kernel = mrb->kernel_module;
   

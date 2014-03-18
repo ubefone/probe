@@ -177,7 +177,9 @@ class TestPlugin < Plugin
   end
   
   def monitor_interfaces(*names)
-    @monitored_interfaces = names.size > 1 ? names : names[0]
+    tmp = names.size > 1 ? names : names[0]
+    availables = @sigar.network_interfaces()
+    @monitored_interfaces = tmp.reject{|name, _| !availables.include?(name) }
   end
   
   def monitor_disk_usage(mountpoints)

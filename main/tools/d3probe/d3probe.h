@@ -73,6 +73,7 @@ void init_profiler();
 
 
 typedef struct {
+  char      name[10];
   mrb_value p;
   mrb_state *mrb;
   mrb_value plugin_pipe;
@@ -81,3 +82,4 @@ typedef struct {
   int       host_pipe;
   
 } Plugin;
+

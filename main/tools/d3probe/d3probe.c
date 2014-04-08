@@ -28,7 +28,7 @@ void *plugin_thread(void *arg)
 
 
 
-int init_plugin_from_file(Plugin *plugin, const char *path)
+int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_name)
 {
   int fds[2], flags;
   
@@ -50,7 +50,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path)
   
   plugin->host_pipe = fds[0];
   plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1]);
-  
+  strlcpy(plugin->name, plugin_name, sizeof(plugin->name));
   
   // set ivs
   // struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");
@@ -218,7 +218,7 @@ int main(int argc, char const *argv[])
       exit(1);
     }
     
-    init_plugin_from_file(&plugins[plugins_count], path); plugins_count++;
+    init_plugin_from_file(&plugins[plugins_count], path, plugin_name); plugins_count++;
   }
   
   printf("Instanciating output class...\n");
@@ -265,7 +265,9 @@ int main(int argc, char const *argv[])
     // ask every plugin to send their data
     for(i= 0; i< plugins_count; i++){
       strcpy(buffer, "request");
-      C_CHECK("send", send(plugins[i].host_pipe, buffer, strlen(buffer), 0) );
+      if( send(plugins[i].host_pipe, buffer, strlen(buffer), 0) == -1 ){
+        printf("send error when writing in pipe connected to plugin '%s'\n", plugins[i].name);
+      }
       fds[i] = plugins[i].host_pipe;
       // printf("sent request to %d\n", i);
     }

@@ -50,7 +50,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_n
   
   plugin->host_pipe = fds[0];
   plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1]);
-  strlcpy(plugin->name, plugin_name, sizeof(plugin->name));
+  strncpy(plugin->name, plugin_name, sizeof(plugin->name) - 1);
   
   // set ivs
   // struct RClass *rprobe = mrb_class_get(plugin->mrb, "D3Probe");

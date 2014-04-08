@@ -117,7 +117,7 @@ class Output
     h = JSON::parse( data )
     @buffer << h
   rescue ArgumentError => err
-    raise "Invalid json received: #{data}"
+    raise "Invalid json received: #{data}\n"
   end
   
   ##

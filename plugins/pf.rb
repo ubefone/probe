@@ -32,6 +32,9 @@ end
 class PacketFilterPlugin < Plugin
   def initialize
     @pf = PacketFilter.new
+    
+    # discards first reading (we don't know when it was reset)
+    @pf.stats()
   end
   
   def cycle

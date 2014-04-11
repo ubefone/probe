@@ -84,9 +84,15 @@ MRuby::Build.new do |conf|
   
   
   if debug_mode
-    conf.cc.flags = %w(-g -Wall)
+    conf.cc.flags +=  %w(-g -Wall)
     # keep filenames and line numbers
     # conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
+  end
+  
+  os = `uname`
+  if os == 'SunOS'
+    conf.cc.flags << '-std=gnu99'
+    conf.linker.libraries << %w(socket nsl)
   end
   
   if gc_stress

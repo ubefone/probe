@@ -89,7 +89,7 @@ MRuby::Build.new do |conf|
     # conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
   end
   
-  os = `uname`
+  os = `uname`.strip()
   if os == 'SunOS'
     conf.cc.flags << '-std=gnu99'
     conf.linker.libraries << %w(socket nsl)

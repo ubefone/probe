@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <signal.h>
-
+#include <strings.h> // bzero
 
 #include "d3probe.h"
 

@@ -50,6 +50,8 @@ MRuby::Build.new do |conf|
   conf.gem core: "mruby-struct"
   conf.gem core: "mruby-numeric-ext"
   # conf.gem core: "mruby-enum-ext"
+  conf.gem core: "mruby-fiber"
+  conf.gem core: "mruby-enumerator" # for break, StopIteration
   conf.gem core: "mruby-string-ext"
 
   # conf.gem github: 'iij/mruby-io'

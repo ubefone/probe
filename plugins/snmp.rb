@@ -8,8 +8,7 @@ class SnmpPlugin < Plugin
   def query(host, opts = {})
     raise "mibs required" unless opts.has_key?(:mibs)
     
-    snmp = SNMP.new(host)
-    snmp.timeout = 1
+    snmp = SNMP.new(host, opts.merge({:timeout => 1, :version => "2c"}))
     
     key = opts.delete(:metric_name) || host
     

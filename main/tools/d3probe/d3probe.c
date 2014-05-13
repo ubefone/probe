@@ -317,10 +317,10 @@ int main(int argc, char const *argv[])
               }
               
               gettimeofday(&answered_at, NULL);
-              printf("received answer from %s in %u ms\n", (const char *) plugins[i].mrb->ud,
-                  (uint32_t)((answered_at.tv_sec - cycle_started_at.tv_sec) * 1000 +
-                  (answered_at.tv_usec - cycle_started_at.tv_usec) / 1000)
-                );
+              // printf("received answer from %s in %u ms\n", (const char *) plugins[i].mrb->ud,
+              //     (uint32_t)((answered_at.tv_sec - cycle_started_at.tv_sec) * 1000 +
+              //     (answered_at.tv_usec - cycle_started_at.tv_usec) / 1000)
+              //   );
               
               buffer[n] = 0x00;
               

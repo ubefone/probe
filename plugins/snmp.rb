@@ -1,5 +1,5 @@
 class SnmpPlugin < Plugin
-  SnmpHost = Struct.new(:obj, :mibs, :metric_name)
+  SnmpHost = Struct.new(:obj, :mibs, :metric_name, :cached_get_query)
   
   def initialize
     @snmps = {}
@@ -15,7 +15,8 @@ class SnmpPlugin < Plugin
     @snmps[key] = SnmpHost.new(
         snmp,
         opts.delete(:mibs),
-        key
+        key,
+        nil
       )
     
     rt = opts.delete(:routing_table)
@@ -26,13 +27,19 @@ class SnmpPlugin < Plugin
   end
     
   def cycle
+    # build get requests and cache them
+    @snmps.each do |_, snmp|
+      query = snmp.obj.build_get_query(snmp.mibs.keys)
+      snmp.cached_get_query = query
+    end
+    
     simple_loop do
       ret = {}
       
       unless @snmps.empty?
         @snmps.each do |_, snmp|
           ret[snmp.metric_name] = {}
-          snmp.obj.get(snmp.mibs.keys) do |oid, tag, val|
+          snmp.obj.get(snmp.cached_get_query) do |oid, tag, val|
             ret[snmp.metric_name][snmp.mibs[oid] || oid] = val
           end
         end

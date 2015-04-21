@@ -252,7 +252,7 @@ class TestPlugin < Plugin
               pid = find_pid(pid)
             end
             
-            if @sigar.pid_valid?(pid)
+            if pid && @sigar.pid_valid?(pid)
               mem = @sigar.proc_mem(pid)
               cpu = @sigar.proc_cpu(pid)
               state = @sigar.proc_state(pid)

@@ -1,3 +1,6 @@
 config.rb
 report/
 build/
+# /apps is a build folder too, it should not be there but the current mruby build system
+# does weird things with paths when doing out of tree builds.
+apps/

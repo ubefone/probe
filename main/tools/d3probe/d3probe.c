@@ -9,7 +9,7 @@
 
 static const char *config_path;
 
-#define BUFFER_SIZE 4096
+#define PIPE_BUFFER_SIZE 4096
 #define MAX_PLUGINS 10
 
 mrb_value wrap_io(mrb_state *mrb, int fd)
@@ -42,7 +42,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_n
   
   C_CHECK("socketpair", socketpair(PF_UNIX, SOCK_DGRAM, 0, fds));
   
-  buffer_size = BUFFER_SIZE;
+  buffer_size = PIPE_BUFFER_SIZE;
   n = sizeof(buffer_size);
   C_CHECK("setsockopt 0 snd", setsockopt(fds[0], SOL_SOCKET, SO_SNDBUF, (void *)&buffer_size, n));
   C_CHECK("setsockopt 0 rcv", setsockopt(fds[0], SOL_SOCKET, SO_RCVBUF, (void *)&buffer_size, n));
@@ -175,7 +175,7 @@ int main(int argc, char const *argv[])
   uint8_t checkpoint_set = 0;
 #endif
   fd_set rfds;
-  char buffer[BUFFER_SIZE];
+  char buffer[PIPE_BUFFER_SIZE];
   int i, n;
   Plugin plugins[MAX_PLUGINS];
   int plugins_count = 0;
@@ -318,8 +318,8 @@ int main(int argc, char const *argv[])
                 break;
               }
               
-              if( n == BUFFER_SIZE ){
-                printf("BUFFER_SIZE is too small, increase it ! (value: %d)\n", BUFFER_SIZE);
+              if( n == PIPE_BUFFER_SIZE ){
+                printf("PIPE_BUFFER_SIZE is too small, increase it ! (value: %d)\n", PIPE_BUFFER_SIZE);
                 continue;
               }
               

@@ -9,6 +9,8 @@
 
 static const char *config_path;
 
+#define BUFFER_SIZE 4096
+#define MAX_PLUGINS 10
 
 mrb_value wrap_io(mrb_state *mrb, int fd)
 {
@@ -30,7 +32,7 @@ void *plugin_thread(void *arg)
 
 int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_name)
 {
-  int fds[2], flags;
+  int fds[2], flags, buffer_size, n;
   
   printf("Loading plugin %s...\n", path);
   plugin->mrb = mrb_open_allocf(profiler_allocf, (void *)path);
@@ -39,6 +41,14 @@ int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_n
   execute_file(plugin->mrb, config_path);
   
   C_CHECK("socketpair", socketpair(PF_UNIX, SOCK_DGRAM, 0, fds));
+  
+  buffer_size = BUFFER_SIZE;
+  n = sizeof(buffer_size);
+  C_CHECK("setsockopt 0 snd", setsockopt(fds[0], SOL_SOCKET, SO_SNDBUF, (void *)&buffer_size, n));
+  C_CHECK("setsockopt 0 rcv", setsockopt(fds[0], SOL_SOCKET, SO_RCVBUF, (void *)&buffer_size, n));
+  
+  C_CHECK("setsockopt 1 snd", setsockopt(fds[1], SOL_SOCKET, SO_SNDBUF, (void *)&buffer_size, n));
+  C_CHECK("setsockopt 1 snd", setsockopt(fds[1], SOL_SOCKET, SO_RCVBUF, (void *)&buffer_size, n));
   
   flags = fcntl(fds[0], F_GETFL);
   flags |= O_NONBLOCK;
@@ -109,9 +119,6 @@ static void fill_timeout(struct timeval *tv, struct timeval started_at, uint64_t
   timeval_subtract(&tmp1, tv, &tmp2);
   memcpy(tv, &tmp1, sizeof(tmp1));
 }
-
-#define BUFFER_SIZE 4096
-#define MAX_PLUGINS 10
 
 #define NOPLUGIN_VALUE 0
 

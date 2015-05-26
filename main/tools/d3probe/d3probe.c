@@ -110,7 +110,7 @@ static void fill_timeout(struct timeval *tv, struct timeval started_at, uint64_t
   memcpy(tv, &tmp1, sizeof(tmp1));
 }
 
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 4096
 #define MAX_PLUGINS 10
 
 #define NOPLUGIN_VALUE 0

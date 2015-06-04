@@ -93,7 +93,7 @@ MRuby::Build.new do |conf|
   
   os = `uname`.strip()
   if os == 'SunOS'
-    conf.cc.flags << '-std=gnu99'
+    conf.cc.flags << '-std=gnu99 -D_REENTRANT'
     conf.linker.libraries << %w(socket nsl)
   end
   

@@ -40,7 +40,8 @@ class SnmpPlugin < Plugin
         @snmps.each do |_, snmp|
           ret[snmp.metric_name] = {}
           snmp.obj.get(snmp.cached_get_query) do |oid, tag, val|
-            ret[snmp.metric_name][snmp.mibs[oid] || oid] = val
+            oid_name = snmp.mibs[oid]
+            ret[snmp.metric_name][oid_name || oid] = postprocess_value(oid_name, val)
           end
         end
         
@@ -52,15 +53,14 @@ class SnmpPlugin < Plugin
   end
   
 private
-  def parse_value(str)
-    type, value = str.split(': ')
-    case type
-      when 'INTEGER' then value.to_i
-      when 'STRING'  then value
-      else
-        raise "unsupported snmp return type: #{type}"
+  def postprocess_value(oid_name, val)
+    if oid_name.start_with?('load')
+      val.to_f
+    else
+      val
     end
   end
+  
 end
 
 

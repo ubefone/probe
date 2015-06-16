@@ -55,7 +55,7 @@ class AveragedStat
   def add_stats(ret)
     ret[@name] = {}
     @keys.each do |name|
-      ret[@name][name] = @last_avg.send(name)
+      ret[@name][name] = @last_avg.send(name).round(2)
     end
   end
 
@@ -254,7 +254,7 @@ class TestPlugin < Plugin
             
             if pid && @sigar.pid_valid?(pid)
               mem = @sigar.proc_mem(pid)
-              cpu = @sigar.proc_cpu(pid)
+              cpu = @sigar.proc_cpu(pid).round(2)
               state = @sigar.proc_state(pid)
               
               data['processes'][label] = {

@@ -11,9 +11,17 @@ class StatsdParser
     # <metric name>:<value>|ms
     data.split("\n").each do |line|
       metric_name, rest = line.split(':')
-      value, _ = rest.split('|')
+      value, type = rest.split('|')
       
-      @values[metric_name] = value.to_i
+      case type
+      when 'c'
+        @values[metric_name] ||= 0
+        @values[metric_name] += 1
+        
+      when 'g' then @values[metric_name] = value.to_i
+      else
+        puts "[statsd] unsupported type: #{type}"
+      end
     end
   end
   

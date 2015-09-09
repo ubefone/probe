@@ -120,40 +120,51 @@ class Output
     raise "Invalid json received: #{data}\n"
   end
   
-  ##
-  # send data
-  def flush
-    # puts "\n\nFLUSH\n"
-    
-    cycle_msg = {
+  def build_msg(host = nil)
+    ret = {
       'type' => 'datapoints',
-      'host' => @hostname
+      'host' => host || @hostname
     }
     
     if @just_started
-      cycle_msg['first'] = true
       @just_started = false
+      ret['first'] = true
     end
     
+    ret
+  end
+  
+  ##
+  # send data
+  def flush
+    built_msgs = {}
+    
     while  msg = @buffer.shift
-      # send_msg(msg)
+      # use global hostname as default
+      host = msg.delete('host') || @hostname
+      # and initialize packet if it does not already exists
+      built_msgs[host] ||= build_msg(host)
+      target = built_msgs[host]
+      
       msg.each do |k, v|
-        if cycle_msg[k]
-          cycle_msg[k] = cycle_msg[k].merge(v)
+        if target[k]
+          target[k] = target[k].merge(v)
         else
-          cycle_msg[k] = v
+          target[k] = v
         end
       end
     end
     
-    send_msg(cycle_msg)
+    # send each message
+    built_msgs.each do |host, msg|
+      send_msg(msg)
+    end
     
   end
   
   def send_msg(msg)
     # p msg
     json = JSON::stringify(msg)
-    # p [:send_msg, json.bytesize]
     @socket.send(Zlib.deflate(json), 0, @host, @port)
   rescue
     # if @socket.send fail, just ignores it

@@ -50,6 +50,13 @@ static mrb_value plugin_getpid(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(pid);
 }
 
+
+extern mrb_int interval;
+static mrb_value _plugin_cycle_interval(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value(interval);
+}
+
 // static mrb_value register_plugin(mrb_state *mrb, mrb_value self)
 // {
 //   mrb_value m_name, m_obj;
@@ -78,6 +85,7 @@ void setup_api(mrb_state *mrb)
   mrb_define_method(mrb, kernel, "ms_sleep", plugin_ms_sleep, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, kernel, "errno_str", plugin_errno, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, kernel, "getpid", plugin_getpid, MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, kernel, "cycle_interval", _plugin_cycle_interval, MRB_ARGS_REQ(0));
   
   
   // D3Probe

@@ -2,10 +2,14 @@ class StatsdParser
   attr_reader :values
   
   def initialize
-    @values = {}
+    @counters = {}
+    @gauges = {}
+    @counter_keys = []
   end
   
   def parse(data)
+    @interval_in_seconds ||= cycle_interval() / 1000.0
+    
     # <metric name>:<value>|g
     # <metric name>:<value>|c[|@<sample rate>]
     # <metric name>:<value>|ms
@@ -15,10 +19,14 @@ class StatsdParser
       
       case type
       when 'c'
-        @values[metric_name] ||= 0
-        @values[metric_name] += 1
+        unless @counter_keys.include?(metric_name)
+          @counter_keys << metric_name
+        end
         
-      when 'g' then @values[metric_name] = value.to_i
+        @counters[metric_name] ||= 0
+        @counters[metric_name] += value.to_i
+        
+      when 'g' then @gauges[metric_name] = value.to_i
       else
         puts "[statsd] unsupported type: #{type}"
       end
@@ -26,8 +34,19 @@ class StatsdParser
   end
   
   def read_and_reset()
-    tmp = @values
-    @values = {}
+    tmp = @gauges
+    
+    @counters.each do |k, v|
+      tmp[k] = v / @interval_in_seconds
+    end
+    
+    @counters = {}
+    @gauges = {}
+    
+    @counter_keys.each do |name|
+      @counters[name] = 0
+    end
+    
     tmp
   end
 end

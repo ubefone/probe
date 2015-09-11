@@ -5,7 +5,6 @@ class StatsdParser
     @counters = {}
     @gauges = {}
     @counter_keys = []
-    data = IO.read('/tmp/test')
   end
   
   def load_counter_list(path)
@@ -99,11 +98,10 @@ class StatsdPlugin < Plugin
         elsif readables.include?(pipe)
           cmd = wait_command()
           break if cmd == "exit"
-          p [:hop]
           data = {}
           
           content = @parser.read_and_reset()
-          p [:cc, content]
+          
           unless content.empty?
             if @host
               data['host'] = @host

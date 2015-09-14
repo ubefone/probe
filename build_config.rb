@@ -127,6 +127,7 @@ MRuby::Build.new do |conf|
     
   
   
+  conf.gem "#{mydir}/plugins_c"
   conf.gem "#{mydir}/main"
   
   

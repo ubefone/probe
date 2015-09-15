@@ -184,8 +184,9 @@ int main(int argc, char const *argv[])
   mrb_value r_output, r_plugins_list;
   mrb_sym output_gv_sym, plugins_to_load_gv_sym;
   
+  printf("Version: %s\n", PROBE_VERSION);
+  
   if( argc != 2 ){
-    printf("Version: %s\n", PROBE_VERSION);
     printf("Usage: %s <config_path>\n", argv[0]);
     exit(1);
   }

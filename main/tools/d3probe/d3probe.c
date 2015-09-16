@@ -422,7 +422,7 @@ int main(int argc, char const *argv[])
       pthread_cancel(plugins[i].thread);
     }
     else {
-      printf("    - plugin \"%s\" exited properly.\n", (const char *) plugins[i].mrb->ud);
+      printf("    - plugin \"%s\" exited properly.\n", (const char *) plugins[i].mrb->allocf_ud);
     }
     
     if( pthread_join(plugins[i].thread, NULL) < 0){

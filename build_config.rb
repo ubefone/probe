@@ -40,7 +40,7 @@ MRuby::Build.new do |conf|
   
   enable_64bits_mode = false
   gc_stress = false
-  debug_mode = true
+  debug_mode = false
 
 
 

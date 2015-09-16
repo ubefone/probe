@@ -7,23 +7,6 @@
 #include "mruby/array.h"
 #include "mruby/hash.h"
 
-
-// #include "mruby/string.h"
-// static void pp(mrb_state *mrb, mrb_value obj, int prompt)
-// {
-//   obj = mrb_funcall(mrb, obj, "inspect", 0);
-//   if (prompt) {
-//     if (!mrb->exc) {
-//       fputs(" => ", stdout);
-//     }
-//     else {
-//       obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
-//     }
-//   }
-//   fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);
-//   putc('\n', stdout);
-// }
-
 // statsd example:
 // <metric name>:<value>|g
 // <metric name>:<value>|c[|@<sample rate>]

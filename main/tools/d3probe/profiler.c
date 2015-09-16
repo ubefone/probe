@@ -39,7 +39,7 @@ void init_profiler()
 
 static allocation_t *create_allocation(mrb_state *mrb, const char *path, uint32_t line, void *address, size_t size)
 {
-  char *tmp = strstr(path, pwd);
+  const char *tmp = strstr(path, pwd);
   allocation_t *alloc = malloc(sizeof(allocation_t));
   
   if( mrb ){
@@ -75,7 +75,7 @@ static allocation_t *create_allocation(mrb_state *mrb, const char *path, uint32_
       }
     }
 
-    alloc->vm = (const char *)mrb->ud;
+    alloc->vm = (const char *)mrb->allocf_ud;
   }
   else {
     alloc->vm = none;
@@ -121,10 +121,10 @@ void print_allocations()
   while( curr != NULL ){
     
     if( curr->ruby_fname[0] != '\0' ){
-      printf("[%s][ruby] %s : %d bytes\n", curr->vm, curr->ruby_fname, curr->size);
+      printf("[%s][ruby] %s : %zu bytes\n", curr->vm, curr->ruby_fname, curr->size);
     }
     else {
-      printf("[%s][C] %s:%d : %d bytes\n", curr->vm, curr->fname, curr->line, curr->size);
+      printf("[%s][C] %s:%d : %zu bytes\n", curr->vm, curr->fname, curr->line, curr->size);
     }
     
     curr = curr->next;

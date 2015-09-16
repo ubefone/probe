@@ -120,7 +120,7 @@ static mrb_value _parser_get_gauges(statsd_parser *state){ return state->gauges;
 static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
 {
   mrb_value r_pipe, r_socket, r_block, r_initial_counters;
-  int pipe, socket, maxfd;
+  int pipe, socket, maxfd, idx;
   statsd_parser parser;
   
   mrb_get_args(mrb, "ooH&", &r_pipe, &r_socket, &r_initial_counters, &r_block);
@@ -137,6 +137,7 @@ static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
   }
   
   _statsd_parser_init(mrb, &parser, r_initial_counters);
+  idx = mrb_gc_arena_save(mrb);
   
   // and now the main loop
   while(1){
@@ -189,6 +190,8 @@ static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
         
         // core asked for data, run the block with the data we got so far
         mrb_yield(mrb, r_block, r_args);
+        
+        mrb_gc_arena_restore(mrb, idx);
         
         // reset parser state
         _statsd_reset(mrb, &parser);

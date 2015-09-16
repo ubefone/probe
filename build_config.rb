@@ -87,7 +87,7 @@ MRuby::Build.new do |conf|
   
   
   if debug_mode
-    conf.cc.flags +=  %w(-g -Wall)
+    conf.cc.flags +=  %w(-g -Wall -O0)
     # keep filenames and line numbers
     # conf.mrbc.compile_options = "-g -B%{funcname} -o-" # The -g option is required for line numbers
   end

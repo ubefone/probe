@@ -361,8 +361,10 @@ int main(int argc, char const *argv[])
       }
     }
     
+    int idx = mrb_gc_arena_save(mrb);
     mrb_funcall(mrb, r_output, "flush", 0);
     check_exception("flush", mrb);
+    mrb_gc_arena_restore(mrb, idx);
     
     // and now sleep until the next cycle
     gettimeofday(&cycle_completed_at, NULL);

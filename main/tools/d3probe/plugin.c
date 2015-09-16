@@ -28,6 +28,17 @@ static mrb_value plugin_pipe(mrb_state *mrb, mrb_value self)
   return plugin->plugin_pipe;
 }
 
+static mrb_value plugin_operating_system(mrb_state *mrb, mrb_value self)
+{
+  mrb_value os;
+  
+#ifdef __OpenBSD__
+  os = mrb_str_new_cstr(mrb, "OpenBSD");
+#endif
+  
+  return os;
+}
+
 // static mrb_value plugin_inherited(mrb_state *mrb, mrb_value self)
 // {
 //   mrb_value m_obj;
@@ -47,5 +58,6 @@ void setup_plugin_api(mrb_state *mrb)
   
   mrb_define_method(mrb, plugin_class, "initialize", plugin_initialize,  ARGS_REQ(1));
   mrb_define_method(mrb, plugin_class, "pipe", plugin_pipe,  ARGS_REQ(0));
+  mrb_define_method(mrb, plugin_class, "operating_system", plugin_operating_system,  ARGS_REQ(0));
   // mrb_define_singleton_method(mrb, plugin_class, "inherited", plugin_inherited, ARGS_REQ(1));
 }

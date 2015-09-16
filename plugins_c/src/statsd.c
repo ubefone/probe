@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "mruby.h"
 #include "mruby/array.h"
@@ -132,7 +133,7 @@ static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
     FD_SET(socket, &rd_set);
     
     if( select(maxfd, &rd_set, NULL, NULL, NULL) == -1){
-      mrb_raise(mrb, E_RUNTIME_ERROR, "select failed");
+      mrb_raisef(mrb, E_RUNTIME_ERROR, "select failed: %s", mrb_str_new_cstr(mrb, strerror(errno)));
       break;
     }
     

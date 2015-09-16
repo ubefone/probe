@@ -4,15 +4,9 @@
 [submodule "mrbgems/mruby-io"]
 	path = mrbgems/mruby-io
 	url = https://github.com/iij/mruby-io.git
-[submodule "mrbgems/mruby-json"]
-	path = mrbgems/mruby-json
-	url = https://github.com/mattn/mruby-json.git
 [submodule "mrbgems/mruby-socket"]
 	path = mrbgems/mruby-socket
 	url = https://github.com/iij/mruby-socket.git
-[submodule "mrbgems/mruby-zlib"]
-	path = mrbgems/mruby-zlib
-	url = https://github.com/schmurfy/mruby-zlib.git
 [submodule "mrbgems/msnmp"]
 	path = mrbgems/msnmp
 	url = https://github.com/schmurfy/msnmp.git
@@ -22,3 +16,9 @@
 [submodule "mrbgems/mruby-dir"]
 	path = mrbgems/mruby-dir
 	url = https://github.com/iij/mruby-dir.git
+[submodule "mrbgems/mruby-zlib2"]
+	path = mrbgems/mruby-zlib2
+	url = git@github.com:iij/mruby-zlib.git
+[submodule "mrbgems/mruby-iijson"]
+	path = mrbgems/mruby-iijson
+	url = git@github.com:iij/mruby-iijson.git

@@ -377,6 +377,10 @@ int main(int argc, char const *argv[])
     
     // force a gc run at the end of each cycle
     mrb_full_gc(mrb);
+    // printf("[main] capa: %d / %d\n", mrb->arena_idx, mrb->arena_capa);
+    // for(i= 0; i< plugins_count; i++){
+    //   printf("[%s] capa: %d / %d\n", plugins[i].name, plugins[i].mrb->arena_idx, plugins[i].mrb->arena_capa);
+    // }
   
   #ifdef _MEM_PROFILER
     checkpoint_set = 1;

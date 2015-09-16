@@ -51,6 +51,7 @@ MRuby::Build.new do |conf|
   conf.gem core: "mruby-numeric-ext"
   # conf.gem core: "mruby-enum-ext"
   conf.gem core: "mruby-fiber"
+  conf.gem core: "mruby-sprintf"
   conf.gem core: "mruby-enumerator" # for break, StopIteration
   conf.gem core: "mruby-string-ext"
 
@@ -64,9 +65,9 @@ MRuby::Build.new do |conf|
   conf.gem "#{mydir}/mrbgems/mruby-io"
   conf.gem "#{mydir}/mrbgems/mruby-dir"
   conf.gem "#{mydir}/mrbgems/mruby-socket"
-  conf.gem "#{mydir}/mrbgems/mruby-json"
+  conf.gem "#{mydir}/mrbgems/mruby-iijson"
   conf.gem "#{mydir}/mrbgems/mruby-ping"
-  conf.gem "#{mydir}/mrbgems/mruby-zlib"
+  conf.gem "#{mydir}/mrbgems/mruby-zlib2"
   
   conf.gem "#{mydir}/mrbgems/mruby-pack" # dependency of snmp
   conf.gem "#{mydir}/mrbgems/msnmp"

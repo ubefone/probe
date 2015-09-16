@@ -164,7 +164,7 @@ class Output
   
   def send_msg(msg)
     # p msg
-    json = JSON::stringify(msg)
+    json = JSON::dump(msg)
     @socket.send(Zlib.deflate(json), 0, @host, @port)
   rescue
     # if @socket.send fail, just ignores it

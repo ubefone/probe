@@ -1,11 +1,11 @@
 
 class Plugin
   def send_metrics(h)
-    str = Zlib.deflate( JSON::stringify(h) )
+    str = Zlib.deflate( JSON::dump(h) )
     pipe.write( str )
     
-  rescue IOError
-    puts "[#{self.class}] Failed to write data into pipe (errno: #{Kernel.errno_str()})"
+  rescue IOError => err
+    puts "[#{self.class}] Failed to write data into pipe: #{err}"
   end
   
   def wait_command

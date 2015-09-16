@@ -13,10 +13,12 @@ mrb_int interval;
 #define PIPE_BUFFER_SIZE 4096
 #define MAX_PLUGINS 10
 
-mrb_value wrap_io(mrb_state *mrb, int fd)
+mrb_value wrap_io(mrb_state *mrb, int fd, char *mode)
 {
+  mrb_value r_mode = mrb_str_new_cstr(mrb, mode);;
   struct RClass *c = mrb_class_get(mrb, "BasicSocket");
-  return mrb_funcall(mrb, mrb_obj_value(c), "new", 1, mrb_fixnum_value(fd));
+  
+  return mrb_funcall(mrb, mrb_obj_value(c), "new", 2, mrb_fixnum_value(fd), r_mode);
 }
 
 void *plugin_thread(void *arg)
@@ -60,7 +62,7 @@ int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_n
   
   
   plugin->host_pipe = fds[0];
-  plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1]);
+  plugin->plugin_pipe = wrap_io(plugin->mrb, fds[1], "w");
   strncpy(plugin->name, plugin_name, sizeof(plugin->name) - 1);
   
   // set ivs

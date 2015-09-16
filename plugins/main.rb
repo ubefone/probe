@@ -155,6 +155,17 @@ class Output
       end
     end
     
+    # if the probe is launched by daemontools, check our memory usage
+    # if it exceeds 100MB print an error and exit
+    if built_msgs[@hostname] && built_msgs[@hostname]["processes"] && (probe_res = built_msgs[@hostname]["processes"]["probe"])
+      mem = probe_res['memory'] / 1024
+      puts "memory used: #{mem} MB"
+      if mem >= 100
+        puts "using too much memory, exiting now !"
+        exit
+      end
+    end
+    
     # send each message
     built_msgs.each do |host, msg|
       send_msg(msg)

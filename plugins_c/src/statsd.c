@@ -106,6 +106,7 @@ static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
   mrb_value r_pipe, r_socket, r_block, r_initial_counters;
   int pipe, socket, maxfd, idx;
   statsd_parser parser;
+  fd_set rd_set;
   
   mrb_get_args(mrb, "ooH&", &r_pipe, &r_socket, &r_initial_counters, &r_block);
   
@@ -125,9 +126,10 @@ static mrb_value _network_loop(mrb_state *mrb, mrb_value self)
   
   // and now the main loop
   while(1){
-    fd_set rd_set;
     ssize_t rcv_size;
     char core_msg[10] = "";
+    
+    FD_ZERO(&rd_set);
     
     FD_SET(pipe, &rd_set);
     FD_SET(socket, &rd_set);

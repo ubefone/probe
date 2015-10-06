@@ -116,7 +116,7 @@ class Output
     data = Zlib.inflate(json)
     h = JSON::parse( data )
     @buffer << h
-  rescue ArgumentError => err
+  rescue ArgumentError, JSON::ParserError => err
     raise "Invalid json received: #{data}\n"
   end
   

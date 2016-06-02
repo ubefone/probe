@@ -76,6 +76,9 @@ int init_plugin_from_file(Plugin *plugin, const char *path, const char *plugin_n
   // associates the c structure with the ruby object
   DATA_PTR(plugin->plugin_obj)  = (void*)plugin;
   
+  mrb_funcall(plugin->mrb, plugin->plugin_obj, "after_config", 0);
+  check_exception("after_config", plugin->mrb);
+  
   return 0;
 }
 

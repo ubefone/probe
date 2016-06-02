@@ -1,5 +1,8 @@
 
 class Plugin
+  def after_config
+  end
+  
   def send_metrics(h)
     str = Zlib.deflate( JSON::dump(h) )
     pipe.write( str )

@@ -64,6 +64,7 @@ MRuby::Build.new do |conf|
   
   conf.gem "#{mydir}/mrbgems/mruby-io"
   conf.gem "#{mydir}/mrbgems/mruby-dir"
+  conf.gem "#{mydir}/mrbgems/mruby-errno"
   conf.gem "#{mydir}/mrbgems/mruby-socket"
   conf.gem "#{mydir}/mrbgems/mruby-iijson"
   conf.gem "#{mydir}/mrbgems/mruby-ping"

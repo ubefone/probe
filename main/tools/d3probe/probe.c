@@ -34,15 +34,6 @@ static mrb_value plugin_ms_sleep(mrb_state *mrb, mrb_value self)
 }
 
 
-static mrb_value plugin_errno(mrb_state *mrb, mrb_value self)
-{
-  mrb_value r_ret;
-  
-  r_ret = mrb_str_new_cstr(mrb, strerror(errno));
-  
-  return r_ret;
-}
-
 
 static mrb_value plugin_getpid(mrb_state *mrb, mrb_value self)
 {
@@ -83,7 +74,6 @@ void setup_api(mrb_state *mrb)
   // Kernel
   mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, kernel, "ms_sleep", plugin_ms_sleep, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, kernel, "errno_str", plugin_errno, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, kernel, "getpid", plugin_getpid, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, kernel, "cycle_interval", _plugin_cycle_interval, MRB_ARGS_REQ(0));
   

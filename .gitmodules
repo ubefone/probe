@@ -22,3 +22,6 @@
 [submodule "mrbgems/mruby-iijson"]
 	path = mrbgems/mruby-iijson
 	url = git@github.com:iij/mruby-iijson.git
+[submodule "mrbgems/mruby-errno"]
+	path = mrbgems/mruby-errno
+	url = https://github.com/iij/mruby-errno.git

@@ -280,7 +280,11 @@ class TestPlugin < Plugin
         
         send_metrics(data)
         GC.start()
-        
+      
+      
+      rescue Errno::EWOULDBLOCK
+        # ignore
+      
       rescue => err
         if err.message != "recv"
           p [:err, err, err.message]

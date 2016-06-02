@@ -1,5 +1,6 @@
 
 #include "d3probe.h"
+#include <sys/time.h>
 
 // static mrb_value plugin_report(mrb_state *mrb, mrb_value self)
 // {
@@ -33,6 +34,13 @@ static mrb_value plugin_ms_sleep(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+
+static mrb_value plugin_gettime(mrb_state *mrb, mrb_value self)
+{
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return mrb_fixnum_value( (tv.tv_sec * 1000) + (tv.tv_usec/1000) );
+}
 
 
 static mrb_value plugin_getpid(mrb_state *mrb, mrb_value self)
@@ -74,6 +82,7 @@ void setup_api(mrb_state *mrb)
   // Kernel
   mrb_define_method(mrb, kernel, "sleep", plugin_sleep, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, kernel, "ms_sleep", plugin_ms_sleep, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, kernel, "time", plugin_gettime, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, kernel, "getpid", plugin_getpid, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, kernel, "cycle_interval", _plugin_cycle_interval, MRB_ARGS_REQ(0));
   

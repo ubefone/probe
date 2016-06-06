@@ -1,5 +1,5 @@
 class TcpPlugin < Plugin
-  attr_accessor :res, :app
+  attr_accessor :app
   attr_accessor :max_retries, :retry_delay
   
   def initialize
@@ -10,10 +10,6 @@ class TcpPlugin < Plugin
   def after_config
     @retry_delay ||= 0.2
     @max_retries ||= 10
-    
-    unless @res
-      raise "res is mandatory"
-    end
   end
   
   def add_request(name, opts = {})

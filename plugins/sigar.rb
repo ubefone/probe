@@ -90,7 +90,7 @@ class AveragedSwapStats < AveragedStat
 end
 
 
-class TestPlugin < Plugin
+class SigarPlugin < Plugin
   
   attr_accessor :loop_delay
   
@@ -297,4 +297,4 @@ class TestPlugin < Plugin
   end
 end
 
-register_plugin('sigar', TestPlugin.new)
+register_plugin('sigar', SigarPlugin.new)

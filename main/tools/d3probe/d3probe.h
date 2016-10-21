@@ -25,7 +25,7 @@
 #include "dmalloc.h"
 #endif
 
-#define PROBE_VERSION "1.7.1"
+#define PROBE_VERSION "1.7.2"
 
 #define C_CHECK(MSG, what) if(what == -1){ perror(MSG);  return -1; }
 
@@ -82,4 +82,3 @@ typedef struct {
   int       host_pipe;
   
 } Plugin;
-

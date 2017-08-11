@@ -56,6 +56,9 @@ class TcpPlugin < Plugin
     begin
       str = s.recv_nonblock(100)
       return (str == request[1])
+    rescue Errno::ECONNRESET
+      return false
+    
     rescue Errno::EWOULDBLOCK
       IO.select([s], nil, nil, @retry_delay)
       if (retries -= 1) <= 0

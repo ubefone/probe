@@ -30,7 +30,7 @@ static mrb_value plugin_pipe(mrb_state *mrb, mrb_value self)
 
 static mrb_value plugin_operating_system(mrb_state *mrb, mrb_value self)
 {
-  mrb_value os;
+  mrb_value os = mrb_nil_value();
   
 #ifdef __OpenBSD__
   os = mrb_str_new_cstr(mrb, "OpenBSD");

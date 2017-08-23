@@ -88,8 +88,8 @@ void setup_api(mrb_state *mrb)
   
   
   // D3Probe
-  // mrb_define_singleton_method(mrb, class, "report", plugin_report, ARGS_REQ(1));
-  // mrb_define_singleton_method(mrb, class, "register_plugin", register_plugin, ARGS_REQ(2));
+  // mrb_define_singleton_method(mrb, class, "report", plugin_report, MRB_ARGS_REQ(1));
+  // mrb_define_singleton_method(mrb, class, "register_plugin", register_plugin, MRB_ARGS_REQ(2));
   
   setup_plugin_api(mrb);
   setup_sigar_api(mrb);

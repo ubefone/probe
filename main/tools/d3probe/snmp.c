@@ -267,10 +267,10 @@ void setup_snmp_api(mrb_state *mrb)
 //   init_snmp("Probe");
 //   // read_mib("/usr/local/share/snmp/mibs/SNMPv2-MIB.txt");
   
-//   mrb_define_method(mrb, c, "initialize", _snmp_init,  ARGS_REQ(1));
-//   mrb_define_method(mrb, c, "get", _snmp_get,  ARGS_REQ(1));
-//   mrb_define_method(mrb, c, "cleanup", _snmp_cleanup,  ARGS_REQ(0));
+//   mrb_define_method(mrb, c, "initialize", _snmp_init,  MRB_ARGS_REQ(1));
+//   mrb_define_method(mrb, c, "get", _snmp_get,  MRB_ARGS_REQ(1));
+//   mrb_define_method(mrb, c, "cleanup", _snmp_cleanup,  MRB_ARGS_REQ(0));
   
-//   mrb_define_singleton_method(mrb, (struct RObject *)c, "load_mibs", _snmp_load_mib,  ARGS_REQ(1));
-//   mrb_define_singleton_method(mrb, (struct RObject *)c, "select", _snmp_select, ARGS_REQ(0));
+//   mrb_define_singleton_method(mrb, (struct RObject *)c, "load_mibs", _snmp_load_mib,  MRB_ARGS_REQ(1));
+//   mrb_define_singleton_method(mrb, (struct RObject *)c, "select", _snmp_select, MRB_ARGS_REQ(0));
 }

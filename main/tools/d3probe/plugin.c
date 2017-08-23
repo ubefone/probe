@@ -56,8 +56,8 @@ void setup_plugin_api(mrb_state *mrb)
 {
   struct RClass *plugin_class = mrb_class_get(mrb, "Plugin");
   
-  mrb_define_method(mrb, plugin_class, "initialize", plugin_initialize,  ARGS_REQ(1));
-  mrb_define_method(mrb, plugin_class, "pipe", plugin_pipe,  ARGS_REQ(0));
-  mrb_define_method(mrb, plugin_class, "operating_system", plugin_operating_system,  ARGS_REQ(0));
-  // mrb_define_singleton_method(mrb, plugin_class, "inherited", plugin_inherited, ARGS_REQ(1));
+  mrb_define_method(mrb, plugin_class, "initialize", plugin_initialize,  MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, plugin_class, "pipe", plugin_pipe,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, plugin_class, "operating_system", plugin_operating_system,  MRB_ARGS_REQ(0));
+  // mrb_define_singleton_method(mrb, plugin_class, "inherited", plugin_inherited, MRB_ARGS_REQ(1));
 }

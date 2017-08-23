@@ -526,37 +526,37 @@ void setup_sigar_api(mrb_state *mrb)
 {
   struct RClass *c = mrb_define_class(mrb, "Sigar", mrb->object_class);
   
-  mrb_define_method(mrb, c, "initialize", _sigar_init,  ARGS_REQ(0));
+  mrb_define_method(mrb, c, "initialize", _sigar_init,  MRB_ARGS_REQ(0));
   
   // mostly static informations
-  mrb_define_method(mrb, c, "cpus_info_get", _sigar_cpus_info_get,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "filesystems", _sigar_filesystems,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "sysinfo", _sigar_sysinfo,  ARGS_REQ(0));  
-  mrb_define_method(mrb, c, "network_interfaces", _sigar_net_interfaces,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "network_infos", _sigar_net_infos,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "network_routes", _sigar_net_routes,  ARGS_REQ(0));
+  mrb_define_method(mrb, c, "cpus_info_get", _sigar_cpus_info_get,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "filesystems", _sigar_filesystems,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "sysinfo", _sigar_sysinfo,  MRB_ARGS_REQ(0));  
+  mrb_define_method(mrb, c, "network_interfaces", _sigar_net_interfaces,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "network_infos", _sigar_net_infos,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "network_routes", _sigar_net_routes,  MRB_ARGS_REQ(0));
 
   
   
   // live system measure
-  mrb_define_method(mrb, c, "cpu_get", _sigar_cpu_get,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "mem_get", _sigar_mem_get,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "swap_get", _sigar_swap_get,  ARGS_REQ(0));
-  mrb_define_method(mrb, c, "loadavg", _sigar_loadavg,  ARGS_REQ(0));
+  mrb_define_method(mrb, c, "cpu_get", _sigar_cpu_get,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "mem_get", _sigar_mem_get,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "swap_get", _sigar_swap_get,  MRB_ARGS_REQ(0));
+  mrb_define_method(mrb, c, "loadavg", _sigar_loadavg,  MRB_ARGS_REQ(0));
   
-  mrb_define_method(mrb, c, "fs_usage", _sigar_fs_usage,  ARGS_REQ(1));
+  mrb_define_method(mrb, c, "fs_usage", _sigar_fs_usage,  MRB_ARGS_REQ(1));
   
-  mrb_define_method(mrb, c, "if_stats", _sigar_if_stats,  ARGS_REQ(1));
+  mrb_define_method(mrb, c, "if_stats", _sigar_if_stats,  MRB_ARGS_REQ(1));
   
-  mrb_define_method(mrb, c, "pid_valid?", _sigar_verify_pid,  ARGS_REQ(1));
-  mrb_define_method(mrb, c, "proc_mem", _sigar_proc_mem,  ARGS_REQ(1));
-  mrb_define_method(mrb, c, "proc_time", _sigar_proc_time,  ARGS_REQ(1));
-  mrb_define_method(mrb, c, "proc_cpu",   _sigar_proc_cpu,  ARGS_REQ(1));
-  mrb_define_method(mrb, c, "proc_state", _sigar_proc_state,  ARGS_REQ(1));
+  mrb_define_method(mrb, c, "pid_valid?", _sigar_verify_pid,  MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, c, "proc_mem", _sigar_proc_mem,  MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, c, "proc_time", _sigar_proc_time,  MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, c, "proc_cpu",   _sigar_proc_cpu,  MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, c, "proc_state", _sigar_proc_state,  MRB_ARGS_REQ(1));
   
   
   // others 
-  mrb_define_method(mrb, c, "uptime", _sigar_uptime,  ARGS_REQ(0));
+  mrb_define_method(mrb, c, "uptime", _sigar_uptime,  MRB_ARGS_REQ(0));
 }
 
 

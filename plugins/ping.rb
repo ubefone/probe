@@ -48,22 +48,22 @@ class PingPlugin < Plugin
       if @icmp.has_targets?
         percentiles = [0.05, 0.25, 0.5, 0.75, 0.95, 0.98]
         ret = @icmp.send_pings(@icmp_timeout, @icmp_count, @icmp_delay, percentiles)
-        # p [:ret, ret]
         
         data['icmp_ping'] = {}
         
         ret.each do |host, dd|
           key = @icmp_host_mapping[host] || host
           
-          data['icmp_ping'][key] = {
-            'latency' => ret[host][0] / 1000,
-            'loss' => ret[host][1]
-          }
+          loss = ret[host][1]
+          data['icmp_ping'][key] = {'loss' => loss}
+          
+          if ret[host][0]
+            data['icmp_ping'][key]['latency'] = (ret[host][0] / 1000).to_i
+          end
           
           percentiles.each do |p|
-            v = ret[host][2][p]
-            if v
-              data['icmp_ping'][key]["p#{(p * 100).to_i}"] = v / 1000
+            if v = ret[host][2][p]
+              data['icmp_ping'][key]["p#{(p * 100).to_i}"] = (v / 1000).to_i
             end
           end
         end

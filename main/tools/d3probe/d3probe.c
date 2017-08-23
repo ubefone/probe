@@ -13,7 +13,7 @@ mrb_int interval;
 #define PIPE_BUFFER_SIZE 4096
 #define MAX_PLUGINS 10
 
-mrb_value wrap_io(mrb_state *mrb, int fd, char *mode)
+mrb_value wrap_io(mrb_state *mrb, int fd, const char *mode)
 {
   mrb_value r_mode = mrb_str_new_cstr(mrb, mode);;
   struct RClass *c = mrb_class_get(mrb, "BasicSocket");
@@ -203,7 +203,7 @@ int main(int argc, char const *argv[])
   config_path = argv[1];
   
   printf("Initializing core...\n");
-  mrb = mrb_open_allocf(profiler_allocf, "main");
+  mrb = mrb_open_allocf(profiler_allocf, (void *)"main");
   output_gv_sym = mrb_intern_cstr(mrb, "$output");
   plugins_to_load_gv_sym = mrb_intern_cstr(mrb, "$plugins_to_load");
   setup_api(mrb);

@@ -1,5 +1,5 @@
 class PingPlugin < Plugin
-  attr_accessor :icmp_timeout, :icmp_delay, :icmp_count
+  attr_accessor :icmp_timeout, :icmp_delay, :icmp_count, :host
   
   def initialize
     # TODO: param should allow nil
@@ -66,6 +66,10 @@ class PingPlugin < Plugin
               data['icmp_ping'][key]["p#{(p * 100).to_i}"] = (v / 1000).to_i
             end
           end
+        end
+        
+        if @host
+          data['host'] = @host
         end
         
       end

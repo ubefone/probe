@@ -9,7 +9,7 @@
 	url = https://github.com/iij/mruby-socket.git
 [submodule "mrbgems/msnmp"]
 	path = mrbgems/msnmp
-	url = https://github.com/schmurfy/msnmp.git
+	url = https://github.com/iij/msnmp.git
 [submodule "mrbgems/mruby-pack"]
 	path = mrbgems/mruby-pack
 	url = https://github.com/iij/mruby-pack.git
